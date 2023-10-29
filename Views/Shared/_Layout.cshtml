@@ -24,10 +24,10 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        @foreach (Categories category in ViewBag.CategoriesList)
+                        @foreach (Extension extension in ViewBag.CategoriesList)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-route-catId="@category.Id" asp-action="LinksCatalog">@category.Name</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-route-extId="@extension.Id" asp-action="ContentCatalog">@extension.Name</a>
                             </li>
                         }
                     </ul>
@@ -36,7 +36,7 @@
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="container-fluid">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>

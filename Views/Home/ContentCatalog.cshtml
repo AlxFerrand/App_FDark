@@ -1,0 +1,49 @@
+﻿@model List<Content>;
+@{
+    ViewData["Title"] = ViewData["CategorySelect"];
+}
+<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+            <ul class="navbar-nav flex-grow-1">
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-route-extId="@ViewBag.ActualCatId" asp-route-contentTypeId="0" asp-action="ContentCatalog">All</a>
+                </li>
+                @foreach (ContentType contentType in ViewBag.ContentTypeList)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-route-extId="@ViewBag.ActualCatId" asp-route-contentTypeId="@contentType.Id" asp-action="ContentCatalog">@contentType.Name</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="row row-cols-1 row-cols-md-1 row-cols-lg-2 row-cols-xl-3 row-cols-xxl-4">
+    @foreach (var c in Model)
+    {
+        <article class="col p-2">
+            <!-- Déclaration du composant -->
+            <div class="card">
+                <div>
+                    <div class="row justify-content-between align-items-start ">
+                        <div class="col-9 ms-1">
+                            <a class="text-decoration-none text-dark" asp-controller="Home" asp-route-contentId="@c.Id" asp-action="LinksCatalog"><h4>@c.Name</h4></a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Image située en haut -->
+                <div class="card-img-container">
+                    <a asp-controller="Home" asp-route-contentId="@c.Id" asp-action="LinksCatalog">
+                    <img class="card-image rounded-2"
+                         src="/img/@c.Picture" />
+                    </a>
+                </div>
+            </div>
+        </article>
+    }
+</div>

@@ -10,10 +10,12 @@ namespace App_FDark.Data
             : base(options)
         {
         }
+        
         public DbSet<Links> Links { get; set; }
-        public DbSet<Categories> Categories { get; set; }
-        public DbSet<SubCategories> SubCategories { get; set; }
-
+        public DbSet<Extension> Extension { get; set; }
+        public DbSet<Content> Content { get; set; }
+        public DbSet<ContentType> Types { get; set; }
+        
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

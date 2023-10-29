@@ -10,87 +10,87 @@ using App_FDark.Models;
 
 namespace App_FDark.Controllers
 {
-    public class CategoriesController : Controller
+    public class ContentsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public CategoriesController(ApplicationDbContext context)
+        public ContentsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Categories
+        // GET: Contents
         public async Task<IActionResult> Index()
         {
-              return _context.Categories != null ? 
-                          View(await _context.Categories.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Categories'  is null.");
+              return _context.Content != null ? 
+                          View(await _context.Content.ToListAsync()) :
+                          Problem("Entity set 'ApplicationDbContext.Content'  is null.");
         }
 
-        // GET: Categories/Details/5
+        // GET: Contents/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Categories == null)
+            if (id == null || _context.Content == null)
             {
                 return NotFound();
             }
 
-            var categories = await _context.Categories
+            var content = await _context.Content
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (categories == null)
+            if (content == null)
             {
                 return NotFound();
             }
 
-            return View(categories);
+            return View(content);
         }
 
-        // GET: Categories/Create
+        // GET: Contents/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Categories/Create
+        // POST: Contents/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,SubCatIds")] Categories categories)
+        public async Task<IActionResult> Create([Bind("Id,Name,ExtensionId,ContentTypeId")] Content content)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(categories);
+                _context.Add(content);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(categories);
+            return View(content);
         }
 
-        // GET: Categories/Edit/5
+        // GET: Contents/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Categories == null)
+            if (id == null || _context.Content == null)
             {
                 return NotFound();
             }
 
-            var categories = await _context.Categories.FindAsync(id);
-            if (categories == null)
+            var content = await _context.Content.FindAsync(id);
+            if (content == null)
             {
                 return NotFound();
             }
-            return View(categories);
+            return View(content);
         }
 
-        // POST: Categories/Edit/5
+        // POST: Contents/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,SubCatIds")] Categories categories)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ExtensionId,ContentTypeId")] Content content)
         {
-            if (id != categories.Id)
+            if (id != content.Id)
             {
                 return NotFound();
             }
@@ -99,12 +99,12 @@ namespace App_FDark.Controllers
             {
                 try
                 {
-                    _context.Update(categories);
+                    _context.Update(content);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CategoriesExists(categories.Id))
+                    if (!ContentExists(content.Id))
                     {
                         return NotFound();
                     }
@@ -115,49 +115,49 @@ namespace App_FDark.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(categories);
+            return View(content);
         }
 
-        // GET: Categories/Delete/5
+        // GET: Contents/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Categories == null)
+            if (id == null || _context.Content == null)
             {
                 return NotFound();
             }
 
-            var categories = await _context.Categories
+            var content = await _context.Content
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (categories == null)
+            if (content == null)
             {
                 return NotFound();
             }
 
-            return View(categories);
+            return View(content);
         }
 
-        // POST: Categories/Delete/5
+        // POST: Contents/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Categories == null)
+            if (_context.Content == null)
             {
-                return Problem("Entity set 'ApplicationDbContext.Categories'  is null.");
+                return Problem("Entity set 'ApplicationDbContext.Content'  is null.");
             }
-            var categories = await _context.Categories.FindAsync(id);
-            if (categories != null)
+            var content = await _context.Content.FindAsync(id);
+            if (content != null)
             {
-                _context.Categories.Remove(categories);
+                _context.Content.Remove(content);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CategoriesExists(int id)
+        private bool ContentExists(int id)
         {
-          return (_context.Categories?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Content?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

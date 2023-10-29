@@ -10,87 +10,87 @@ using App_FDark.Models;
 
 namespace App_FDark.Controllers
 {
-    public class SubCategoriesController : Controller
+    public class ExtensionsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public SubCategoriesController(ApplicationDbContext context)
+        public ExtensionsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: SubCategories
+        // GET: Extensions
         public async Task<IActionResult> Index()
         {
-              return _context.SubCategories != null ? 
-                          View(await _context.SubCategories.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.SubCategories'  is null.");
+              return _context.Extension != null ? 
+                          View(await _context.Extension.ToListAsync()) :
+                          Problem("Entity set 'ApplicationDbContext.Categories'  is null.");
         }
 
-        // GET: SubCategories/Details/5
+        // GET: Extensions/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.SubCategories == null)
+            if (id == null || _context.Extension == null)
             {
                 return NotFound();
             }
 
-            var subCategories = await _context.SubCategories
+            var extension = await _context.Extension
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (subCategories == null)
+            if (extension == null)
             {
                 return NotFound();
             }
 
-            return View(subCategories);
+            return View(extension);
         }
 
-        // GET: SubCategories/Create
+        // GET: Extensions/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: SubCategories/Create
+        // POST: Extensions/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] SubCategories subCategories)
+        public async Task<IActionResult> Create([Bind("Id,Name")] Extension extension)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(subCategories);
+                _context.Add(extension);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(subCategories);
+            return View(extension);
         }
 
-        // GET: SubCategories/Edit/5
+        // GET: Extensions/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.SubCategories == null)
+            if (id == null || _context.Extension == null)
             {
                 return NotFound();
             }
 
-            var subCategories = await _context.SubCategories.FindAsync(id);
-            if (subCategories == null)
+            var extension = await _context.Extension.FindAsync(id);
+            if (extension == null)
             {
                 return NotFound();
             }
-            return View(subCategories);
+            return View(extension);
         }
 
-        // POST: SubCategories/Edit/5
+        // POST: Extensions/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] SubCategories subCategories)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Extension extension)
         {
-            if (id != subCategories.Id)
+            if (id != extension.Id)
             {
                 return NotFound();
             }
@@ -99,12 +99,12 @@ namespace App_FDark.Controllers
             {
                 try
                 {
-                    _context.Update(subCategories);
+                    _context.Update(extension);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!SubCategoriesExists(subCategories.Id))
+                    if (!ExtensionExists(extension.Id))
                     {
                         return NotFound();
                     }
@@ -115,49 +115,49 @@ namespace App_FDark.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(subCategories);
+            return View(extension);
         }
 
-        // GET: SubCategories/Delete/5
+        // GET: Extensions/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.SubCategories == null)
+            if (id == null || _context.Extension == null)
             {
                 return NotFound();
             }
 
-            var subCategories = await _context.SubCategories
+            var extension = await _context.Extension
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (subCategories == null)
+            if (extension == null)
             {
                 return NotFound();
             }
 
-            return View(subCategories);
+            return View(extension);
         }
 
-        // POST: SubCategories/Delete/5
+        // POST: Extensions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.SubCategories == null)
+            if (_context.Extension == null)
             {
-                return Problem("Entity set 'ApplicationDbContext.SubCategories'  is null.");
+                return Problem("Entity set 'ApplicationDbContext.Categories'  is null.");
             }
-            var subCategories = await _context.SubCategories.FindAsync(id);
-            if (subCategories != null)
+            var extension = await _context.Extension.FindAsync(id);
+            if (extension != null)
             {
-                _context.SubCategories.Remove(subCategories);
+                _context.Extension.Remove(extension);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool SubCategoriesExists(int id)
+        private bool ExtensionExists(int id)
         {
-          return (_context.SubCategories?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Extension?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

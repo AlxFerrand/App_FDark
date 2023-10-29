@@ -4,6 +4,7 @@ using App_FDark.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace App_FDark.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231029131255_modificationMCD")]
+    partial class modificationMCD
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -121,12 +123,9 @@ namespace App_FDark.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Picture")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
-                    b.ToTable("Content");
+                    b.ToTable("SubCategories");
                 });
 
             modelBuilder.Entity("App_FDark.Models.ContentType", b =>
@@ -160,7 +159,7 @@ namespace App_FDark.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Extension");
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("App_FDark.Models.Links", b =>

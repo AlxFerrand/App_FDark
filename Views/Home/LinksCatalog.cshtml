@@ -1,35 +1,45 @@
 ﻿@model List<Links>;
-@{
-    ViewData["Title"] = ViewData["CategorySelect"];
-}
-<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-    <div class="container-fluid">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-            <ul class="navbar-nav flex-grow-1">
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-route-catId="@ViewBag.ActualCatId" asp-route-subCatId="0" asp-action="LinksCatalog">All</a>
-                </li>
-                @foreach (SubCategories subCategory in ViewBag.SubCategoriesList)
-                {
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-route-catId="@ViewBag.ActualCatId" asp-route-subCatId="@subCategory.Id" asp-action="LinksCatalog">@subCategory.Name</a>
-                    </li>
-                }
-            </ul>
-        </div>
-    </div>
-</nav>
-<div class="row">
-    <ul>
-        @foreach (Links link in Model)
-        {
-            <li>
-                @link.Label
-            </li>
-        }
-    </ul>
+<div class="row row-cols-1 row-cols-md-1 row-cols-lg-2 row-cols-xl-3 row-cols-xxl-4">
+    @foreach (var l in Model)
+    {
+        <article class="col p-2">
+            <!-- Déclaration du composant -->
+            <div class="card">
+                <div>
+                    <div class="row justify-content-between align-items-start ">
+                        <div class="col-9 ms-1">
+                            <a href="@l.Url" target="_blank" class="text-decoration-none text-dark"><h4>@l.Label</h4></a>
+                        </div>
+                        <div class="col">
+                            <div class="d-flex justify-content-end p-2">
+                                <div class="pb-1">
+                                    <button class="btn" type="button">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 128 512">
+                                            <style>
+                                                svg {
+                                                    fill: #424243
+                                                }</style>
+                                            <path d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Image située en haut -->
+                <div class="card-img-container">
+                    <a href="@l.Url" target="_blank">
+                        <img class="card-image rounded-2"
+                             src="/img/@l.Picture" />
+                    </a>
+                </div>
+                <!-- Corps de la carte -->
+                <div class="card-body">
+                    <!-- Titre -->
+                    <p class="text-truncate text-truncate--2">@l.Description</p>
+                </div>
+            </div>
+        </article>
+    }
 </div>

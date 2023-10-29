@@ -20,19 +20,21 @@ namespace App_FDark.Controllers
 
         public IActionResult Index()
         {
-            ViewBag.CategoriesList = new List<Categories>(_context.Categories);
+            ViewBag.CategoriesList = new List<Extension>(_context.Extension);
             return View();
         }
 
-        public IActionResult LinksCatalog(int catId, int subCatId)
+        public IActionResult ContentCatalog(int extId, int contentTypeId, int contentId)
         {
             //Test des paramètres
             try
             {
-                if (catId <= 0 
-                    || _context.Categories.Find(catId).Name.Equals("") 
-                    || subCatId < 0 
-                    || subCatId > 0 && (_context.SubCategories.Find(subCatId).Name.Equals("")))
+                if (extId <= 0
+                    || _context.Extension.Find(extId).Name.Equals("")
+                    || contentTypeId < 0
+                    || contentTypeId > 0 && (_context.Types.Find(contentTypeId).Name.Equals(""))
+                    || contentId < 0
+                    || contentId >0 && (_context.Content.Find(contentId).Name.Equals("")))
                 {
                     return View("Index");
                 }
@@ -40,32 +42,43 @@ namespace App_FDark.Controllers
             {
                 return View("Index");
             }
+            
+            //Recupération des ContentType 
+            List<ContentType> contentTypeList = new List<ContentType>();
 
-            //Recupération des SubCategories
-            List<SubCategories> subCategoriesList = new List<SubCategories>();
-            string subCategoriesOfMyCat = _context.Categories.Find(catId).SubCatIds;
-            string[] subCatSplit = subCategoriesOfMyCat.Split(',');
-            foreach (var sub in subCatSplit)
+            List<Content> contentListOfExt = _context.Content.Where(c=>c.ExtensionId == extId).ToList();
+            foreach (Content content in contentListOfExt)
             {
-                subCategoriesList.Add(_context.SubCategories.Find(int.Parse(sub)));
+                bool findIt = false;
+                int myContentTypeId = content.ContentTypeId;
+                foreach (ContentType contentType in contentTypeList)
+                {
+                    if ((contentType.Id == myContentTypeId)){
+                       findIt= true; 
+                    }
+                }
+                if (!findIt)
+                {
+                    contentTypeList.Add(_context.Types.Find(myContentTypeId));
+                }
             }
 
-
-            //Récupération de Links en fontion de la subCategory
-            List<Links> linksList = new List<Links>();
-            if (subCatId > 0)
+            //Récupération de Contenue en fontion de l'ext et du type
+            List<Content> ContentListOfSelection = new List<Content>();
+            if (contentTypeId > 0)
             {
-                linksList = _context.Links.Where(l=>l.CategoryId == catId).Where(l=>l.SubCatId == subCatId).ToList();
+                ContentListOfSelection = _context.Content.Where(c => c.ExtensionId == extId).Where(c => c.ContentTypeId == contentTypeId).ToList();
             }
             else
             {
-                linksList = _context.Links.Where(l => l.CategoryId == catId).ToList();
+                ContentListOfSelection = _context.Content.Where(c => c.ExtensionId == extId).ToList();
             }
 
-            ViewBag.ActualCatId = catId;
-            ViewBag.SubCategoriesList = subCategoriesList;
-            ViewBag.CategoriesList = new List<Categories>(_context.Categories);
-            return View(linksList);
+            ViewBag.ActualCatId = extId;
+            ViewBag.ContentTypeList = contentTypeList;
+            ViewBag.CategoriesList = new List<Extension>(_context.Extension.ToList());
+
+            return View(ContentListOfSelection);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
