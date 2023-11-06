@@ -48,3 +48,39 @@ body {
 .card-text-important {
     font-size: 1.3rem;
 }
+.logoFDark{
+}
+#layer1 {
+    max-height:200px;
+    max-width :100%;
+    z-index:2;
+}
+#layer2 {
+    position: absolute;
+    margin-top: 20px;
+    height : 150px;
+    width:600px;
+    z-index: 4;
+}
+#logo{
+    height:40px;
+    width:40px;
+}
+.image1 {
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    width: 100%;
+}
+.image2 {
+    height: 100%;
+    max-width: 100%;
+    max-height: 50%;
+    width: 100%;
+}
+.image3 {
+    height: 100%;
+    max-width:100%;
+    max-height: 50%;
+    width: 100%;
+}

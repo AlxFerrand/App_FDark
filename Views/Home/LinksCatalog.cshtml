@@ -1,14 +1,69 @@
-﻿@model List<Links>;
+﻿@model CatalogViewModel;
+
+<div class="row mt-3">
+    <nav class="col-12" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-route-extId="@ViewBag.ContentExtension.Id" asp-route-contentTypeId="0" asp-action="ContentCatalog">@ViewBag.ContentExtension.Name</a></li>
+            <li class="breadcrumb-item"><a <a asp-area="" asp-controller="Home" asp-route-extId="@ViewBag.ContentExtension.Id" asp-route-contentTypeId="@ViewBag.ContentTypeSelected.Id" asp-action="ContentCatalog">@ViewBag.ContentTypeSelected.Name</a></li>
+            <li class="breadcrumb-item active" aria-current="page" ">
+                @ViewBag.ContentSelected.Name
+            </li>
+        </ol>
+    </nav>
+</div>
+<h3>Videos</h3>
 <div class="row row-cols-1 row-cols-md-1 row-cols-lg-2 row-cols-xl-3 row-cols-xxl-4">
-    @foreach (var l in Model)
+    @foreach (var v in Model.Videos)
     {
         <article class="col p-2">
             <!-- Déclaration du composant -->
             <div class="card">
                 <div>
-                    <div class="row justify-content-between align-items-start ">
+                    <div class="row justify-content-between align-items-center ">
                         <div class="col-9 ms-1">
-                            <a href="@l.Url" target="_blank" class="text-decoration-none text-dark"><h4>@l.Label</h4></a>
+                            <a href="@v.Url" target="_blank" class="text-decoration-none text-dark"><h4>@v.Label</h4></a>
+                        </div>
+                        <div class="col">
+                            <div class="d-flex justify-content-end p-2">
+                                <div class="pb-1">
+                                    <button class="btn" type="button">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 128 512">
+                                            <style>
+                                                svg {
+                                                    fill: #424243
+                                                }</style>
+                                            <path d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Image située en haut -->
+                <div class="card-img-container p-1">
+                    <iframe class="card-image rounded-3" src="https://www.youtube.com/embed/@v.VideoId" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+                <!-- Corps de la carte -->
+                <div class="card-body">
+                    <!-- Titre -->
+                    <p class="text-truncate text-truncate--2">@v.Description</p>
+                </div>
+            </div>
+        </article>
+    }
+</div>
+<h3>Sites</h3>
+<div class="row row-cols-1 row-cols-md-1 row-cols-lg-2 row-cols-xl-3 row-cols-xxl-4">
+    @foreach (var s in Model.Sites)
+    {
+        <article class="col p-2">
+            <!-- Déclaration du composant -->
+            <div class="card">
+                <div>
+                    <div class="row justify-content-between align-items-center ">
+                        <div class="col-9 ms-1">
+                            <a href="@s.Url" target="_blank" class="text-decoration-none text-dark"><h4>@s.Label</h4></a>
                         </div>
                         <div class="col">
                             <div class="d-flex justify-content-end p-2">
@@ -29,17 +84,89 @@
                 </div>
                 <!-- Image située en haut -->
                 <div class="card-img-container">
-                    <a href="@l.Url" target="_blank">
+                    <a href="@s.Url" target="_blank">
                         <img class="card-image rounded-2"
-                             src="/img/@l.Picture" />
+                                src="/img/@s.Picture" />
                     </a>
                 </div>
                 <!-- Corps de la carte -->
                 <div class="card-body">
                     <!-- Titre -->
-                    <p class="text-truncate text-truncate--2">@l.Description</p>
+                    <p class="text-truncate text-truncate--2">@s.Description</p>
                 </div>
             </div>
         </article>
     }
+</div>
+<h3>Images</h3>
+<div class="row row-cols-1 row-cols-md-1 row-cols-lg-2 row-cols-xl-3 row-cols-xxl-4">
+    @foreach (var i in Model.Images)
+    {
+        <article class="col p-2">
+            <!-- Déclaration du composant -->
+            <div class="card">
+                <div>
+                    <div class="row justify-content-between align-items-center ">
+                        <div class="col-9 ms-1">
+                            <a href="#" target="_blank" class="text-decoration-none text-dark"><h4>@i.Label</h4></a>
+                        </div>
+                        <div class="col">
+                            <div class="d-flex justify-content-end p-2">
+                                <div class="pb-1">
+                                    <button class="btn" type="button">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 128 512">
+                                            <style>
+                                                svg {
+                                                    fill: #424243
+                                                }</style>
+                                            <path d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Image située en haut -->
+                @if (i.Pictures.Count() > 1)
+                {
+                    <div class="card-img-container row">
+                        <div class="col pe-1">
+                            <a href="#" target="_blank">
+                                <img class="image1 rounded-2 ps-1"
+                                     src="/img/@i.Pictures[0]" />
+                            </a>
+                        </div>
+                        <div class="col ps-1 pe-1">
+                            <a href="#" target="_blank">
+                                <img class=" image2 rounded-2"
+                                     src="/img/@i.Pictures[1]" />
+                            </a>
+                            @if (i.Pictures.Count() > 2)
+                            {
+                                <a href="#" target="_blank">
+                                    <img class=" image3 rounded-2"
+                                         src="/img/@i.Pictures[2]" />
+                                </a>
+                            }        
+                        </div>
+                    </div>
+                }
+                @if (i.Pictures.Count() == 1)
+                {
+                    <div class="card-img-container">
+                        <a href="#" target="_blank">
+                            <img class="card-image rounded-2"
+                                 src="/img/@i.Pictures[0]" />
+                        </a>
+                    </div>
+                }
+                <!-- Corps de la carte -->
+                <div class="card-body">
+                    <!-- Titre -->
+                    <p class="text-truncate text-truncate--2">@i.Description</p>
+                </div>
+            </div>
+        </article>
+    }               
 </div>

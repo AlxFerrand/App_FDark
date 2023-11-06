@@ -10,14 +10,30 @@
         </button>
         <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
             <ul class="navbar-nav flex-grow-1">
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-route-extId="@ViewBag.ActualCatId" asp-route-contentTypeId="0" asp-action="ContentCatalog">All</a>
-                </li>
-                @foreach (ContentType contentType in ViewBag.ContentTypeList)
+                @if(ViewBag.ContentTypeSelect == 0)
                 {
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-route-extId="@ViewBag.ActualCatId" asp-route-contentTypeId="@contentType.Id" asp-action="ContentCatalog">@contentType.Name</a>
+                        <a class="nav-link text-dark text-decoration-underline fw-bold" asp-area="" asp-controller="Home" asp-route-extId="@ViewBag.ActualCatId" asp-route-contentTypeId="0" asp-action="ContentCatalog">All</a>
                     </li>
+                }else{
+                    <li class="nav-item">
+                        <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Home" asp-route-extId="@ViewBag.ActualCatId" asp-route-contentTypeId="0" asp-action="ContentCatalog">All</a>
+                    </li>
+                }
+                @foreach (ContentType contentType in ViewBag.ContentTypeList)
+                {
+                    if (ViewBag.ContentTypeSelect == contentType.Id)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark text-decoration-underline fw-bold" asp-area="" asp-controller="Home" asp-route-extId="@ViewBag.ActualCatId" asp-route-contentTypeId="@contentType.Id" asp-action="ContentCatalog">@contentType.Name</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Home" asp-route-extId="@ViewBag.ActualCatId" asp-route-contentTypeId="@contentType.Id" asp-action="ContentCatalog">@contentType.Name</a>
+                        </li>
+                    }
                 }
             </ul>
         </div>
