@@ -1,5 +1,6 @@
 ﻿using App_FDark.Data;
 using App_FDark.Models;
+using App_FDark.Services.abstractServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,11 +14,13 @@ namespace App_FDark.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
+        private readonly IResourcesServices _resourcesServices;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, IResourcesServices resourcesServices)
         {
             _logger = logger;
             _context = context;
+            _resourcesServices = resourcesServices;
         }
 
         public IActionResult Index()
@@ -102,48 +105,9 @@ namespace App_FDark.Controllers
 
             //Récupération des liens
             List<Links> linksList = _context.Links.Where(l=>l.ContentId == contentId).ToList();
-            CatalogViewModel vm = new CatalogViewModel();
-            vm.Videos = new List<ResourceVideo>();
-            vm.Sites = new List<ResourceSite>();
-            vm.Images = new List<ResourceImage>();
-            List<Links> videoList = linksList.Where(l => l.DataType == "video").ToList();
-            foreach (var l in videoList)
-            {
-                ResourceVideo video = new ResourceVideo();
-                video.Label = l.Label;
-                video.Url = l.Url;
-                video.Description = l.Description;
-                video.VideoId = l.Url.Substring(l.Url.LastIndexOf("v=")+2 , l.Url.LastIndexOf("&") - l.Url.LastIndexOf("v=")-2);
-                vm.Videos.Add(video);
-            }
-            List<Links> siteList = linksList.Where(l => l.DataType == "site").ToList();
-            foreach (var l in siteList)
-            {
-                ResourceSite site = new ResourceSite();
-                site.Label = l.Label;
-                site.Url = l.Url;
-                site.Picture = l.Picture;
-                site.Description = l.Description;
-                vm.Sites.Add(site);
-            }
-            List<Links> imageList = linksList.Where(l => l.DataType == "image").ToList();
-            foreach (var l in imageList)
-            {
-                ResourceImage image = new ResourceImage();
-                image.Label = l.Label;
-                image.Description = l.Description;
-                if (!String.IsNullOrEmpty(l.Picture))
-                {
-                    image.Pictures = l.Picture.Split(',');
-                }
-                else
-                {
-                    string[] test = { "" };
-                    image.Pictures = test;
-                }
-                vm.Images.Add(image);
-            }
+            CatalogViewModel vm = _resourcesServices.CreateCatalogViewModel(linksList);
 
+            //Passage de paramètres à la vue
             Content contentSelected = _context.Content.Find(contentId);
             ViewBag.ContentExtension = _context.Extension.Find(contentSelected.ExtensionId);
             ViewBag.ContentTypeSelected = _context.Types.Find(contentSelected.ContentTypeId);

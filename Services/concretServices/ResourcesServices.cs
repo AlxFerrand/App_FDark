@@ -16,7 +16,7 @@ namespace App_FDark.Services.concretServices
             return vm;
         }
 
-        private List<ResourceVideo> CreateVideoList(List<Links> linksList)
+        public List<ResourceVideo> CreateVideoList(List<Links> linksList)
         {
             List<ResourceVideo> videoListVm = new List<ResourceVideo>();
             List<Links> videoLinksList = linksList.Where(l => l.DataType == "video").ToList();
@@ -26,13 +26,19 @@ namespace App_FDark.Services.concretServices
                 video.Label = l.Label;
                 video.Url = l.Url;
                 video.Description = l.Description;
-                video.VideoId = l.Url.Substring(l.Url.LastIndexOf("v=") + 2, l.Url.LastIndexOf("&") - l.Url.LastIndexOf("v=") - 2);
+                int startIndex = l.Url.LastIndexOf("v=") + 2;
+                int endIndex = l.Url.Length-startIndex;
+                if (l.Url.Substring(startIndex,endIndex).Contains("&"))
+                {
+                    endIndex = l.Url.LastIndexOf("&") - startIndex;
+                }
+                video.VideoId = l.Url.Substring(startIndex,endIndex);
                 videoListVm.Add(video);
             }
             return videoListVm;
         }
 
-        private List<ResourceSite> CreateSiteList(List<Links> linksList)
+        public List<ResourceSite> CreateSiteList(List<Links> linksList)
         {
             List<ResourceSite> siteListVm = new List<ResourceSite>();
             List<Links> siteList = linksList.Where(l => l.DataType == "site").ToList();
@@ -48,7 +54,7 @@ namespace App_FDark.Services.concretServices
             return siteListVm;
         }
 
-        private List<ResourceImage> CreateImageList(List<Links> linksList)
+        public List<ResourceImage> CreateImageList(List<Links> linksList)
         {
             List<ResourceImage> imageListVm = new List<ResourceImage>();
             List<Links> imageList = linksList.Where(l => l.DataType == "image").ToList();

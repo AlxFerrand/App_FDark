@@ -1,5 +1,7 @@
 using App_FDark.Data;
 using App_FDark.Models;
+using App_FDark.Services.abstractServices;
+using App_FDark.Services.concretServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +18,7 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages()
     .AddRazorRuntimeCompilation();
+builder.Services.AddScoped<IResourcesServices, ResourcesServices>();
 
 var app = builder.Build();
 
