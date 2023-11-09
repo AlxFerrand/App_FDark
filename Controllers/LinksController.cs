@@ -56,7 +56,7 @@ namespace App_FDark.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Label,Picture,Url,Description,CategoryId,SubCatId,Status")] Links links)
+        public async Task<IActionResult> Create([Bind("Id,Label,Picture,Url,Description,ContentId,Status")] Links links)
         {
             if (ModelState.IsValid)
             {
@@ -88,7 +88,7 @@ namespace App_FDark.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Label,Picture,Url,Description,CategoryId,SubCatId,Status")] Links links)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Label,Picture,Url,Description,ContentId,Status")] Links links)
         {
             if (id != links.Id)
             {
