@@ -116,6 +116,11 @@ namespace App_FDark.Controllers
             return View(vm);
         }
 
+        public IActionResult HomeAdmin()
+        {
+            return View();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

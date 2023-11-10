@@ -7,24 +7,26 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using App_FDark.Data;
 using App_FDark.Models;
+using App_FDark.Services.abstractServices;
 
 namespace App_FDark.Controllers
 {
     public class LinksController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IResourcesServices _resourcesServices;
 
-        public LinksController(ApplicationDbContext context)
+        public LinksController(ApplicationDbContext context, IResourcesServices resourcesServices)
         {
             _context = context;
+            _resourcesServices = resourcesServices;
         }
 
         // GET: Links
         public async Task<IActionResult> Index()
         {
-              return _context.Links != null ? 
-                          View(await _context.Links.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Links'  is null.");
+            List<ResourceAdminViewModel> vm = _resourcesServices.CreateResourceAdminViewModel(_context.Links.ToList());
+            return View(vm);
         }
 
         // GET: Links/Details/5

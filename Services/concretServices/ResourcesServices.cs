@@ -1,12 +1,18 @@
-﻿using App_FDark.Models;
+﻿using App_FDark.Data;
+using App_FDark.Models;
 using App_FDark.Services.abstractServices;
 using System.Collections.Generic;
+using System.Security.Policy;
 
 namespace App_FDark.Services.concretServices
 {
     public class ResourcesServices : IResourcesServices
     {
-        public ResourcesServices() { }
+        private readonly ApplicationDbContext _context;
+        public ResourcesServices(ApplicationDbContext context) 
+        {
+            _context = context;
+        }
         public CatalogViewModel CreateCatalogViewModel(List<Links> linksList)
         {
             CatalogViewModel vm = new CatalogViewModel();
@@ -75,6 +81,56 @@ namespace App_FDark.Services.concretServices
                 imageListVm.Add(image);
             }
             return imageListVm;
+        }
+
+        public List<ResourceAdminViewModel> CreateResourceAdminViewModel(List<Links> linksList)
+        {
+            List <ResourceAdminViewModel> resourcesList = new List<ResourceAdminViewModel>();
+            foreach (var l in linksList)
+            {
+                int id = l.Id;
+                string label = TruncateString(l.Label,25);
+                string picture = TruncateString(l.Picture,30);
+                string url = TruncateString(l.Url,40);
+                string description = TruncateString(l.Description,40);
+                string content = _context.Content.Where(c => c.Id == l.ContentId).FirstOrDefault().Name;
+                string status = DefineResourceStatus(l.Status);
+                string dataType = l.DataType;
+
+                resourcesList.Add(new ResourceAdminViewModel(id, label, picture, url, description, content, status, dataType));
+            }
+            return resourcesList;
+        }
+
+        public string DefineResourceStatus (int status)
+        {
+            switch (status)
+            {
+                case 1:
+                    return "Proposé";
+                    break;
+                case 2:
+                    return "Vérifié";
+                    break;
+                case 3:
+                    return "Accepté";
+                    break;
+                case 4:
+                    return "Archivé";
+                    break;
+                default:
+                    return "Non definis";
+                    break;
+            }
+
+        }
+        public string TruncateString (string stringToTruncate, int length)
+        {
+            if (!(String.IsNullOrEmpty(stringToTruncate)) &&(stringToTruncate.Length > length))
+            {
+                stringToTruncate = stringToTruncate.Substring(0, length) + "...";
+            }
+            return stringToTruncate;
         }
     }
 }

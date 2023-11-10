@@ -1,7 +1,8 @@
-﻿@model IEnumerable<App_FDark.Models.Links>
+﻿@model List<ResourceAdminViewModel>
 
 @{
     ViewData["Title"] = "Index";
+    Layout = "_LayoutAdmin";
 }
 
 <h1>Index</h1>
@@ -9,26 +10,29 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table">
+<table class="table table-striped table-sm">
     <thead>
-        <tr>
+        <tr class="text-white text-center" style="background-color : rgba(80, 45, 97,1)">
             <th>
-                @Html.DisplayNameFor(model => model.Label)
+                DataType
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Picture)
+                Label
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Url)
+                Picture
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Description)
+                Url
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ContentId)
+                Description
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Status)
+                Content
+            </th>
+            <th>
+                Status
             </th>
             <th></th>
         </tr>
@@ -36,27 +40,29 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
+            <td class="">
+                @Html.DisplayFor(modelItem => item.DataType)
+            </td>
+            <td class="short-text">
                 @Html.DisplayFor(modelItem => item.Label)
             </td>
-            <td>
+            <td class="short-text">
                 @Html.DisplayFor(modelItem => item.Picture)
             </td>
-            <td>
+                <td class="short-text">
                 @Html.DisplayFor(modelItem => item.Url)
             </td>
-            <td>
+            <td class="short-text">
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ContentId)
+            <td class="text-center">
+                @Html.DisplayFor(modelItem => item.Content)
             </td>
-            <td>
+            <td class="text-center">
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>

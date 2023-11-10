@@ -92,11 +92,14 @@ body {
 article:hover {
     transform: scale(1.02);
 }
+.article:hover {
+    transform: scale(1.02);
+}
 
 .nav-item:hover {
     transform: scale(1.08);
     text-decoration: underline;
-    text-decoration-color : white;
+    text-decoration-color: white;
 }
 
 .card-img-container.image-content {
@@ -116,4 +119,14 @@ article:hover {
 }
 .bg-purple-fdark{
     background-color : rgb(111, 60, 130)
+}
+
+table {
+    table-layout: auto;
+}
+
+.short-text {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
