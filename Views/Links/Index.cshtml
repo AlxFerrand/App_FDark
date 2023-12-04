@@ -13,11 +13,41 @@
 <table class="table table-striped table-sm">
     <thead>
         <tr class="text-white text-center" style="background-color : rgba(80, 45, 97,1)">
-            <th>
-                DataType
+            <th class="nav-item">
+                @if (ViewData["order"].Equals("dataType"))
+                {
+                    <a class="text-decoration-none text-white "
+                       asp-action="Index"
+                       asp-route-sortOrder="dataType_desc">
+                        DataType ▲
+                    </a>
+                }
+                else
+                {
+                    <a class="text-decoration-none text-white"
+                       asp-action="Index"
+                       asp-route-sortOrder="dataType">
+                        DataType ▼
+                    </a>
+                }
             </th>
-            <th>
-                Label
+            <th class="nav-item">
+                @if (ViewData["order"].Equals("label"))
+                {
+                    <a class="text-decoration-none text-white "
+                       asp-action="Index"
+                       asp-route-sortOrder="label_desc">
+                        label ▲
+                    </a>
+                }
+                else
+                {
+                    <a class="text-decoration-none text-white"
+                       asp-action="Index"
+                       asp-route-sortOrder="label">
+                        label ▼
+                    </a>
+                }
             </th>
             <th>
                 Picture
@@ -28,11 +58,41 @@
             <th>
                 Description
             </th>
-            <th>
-                Content
+            <th class="nav-item">
+                @if (ViewData["order"].Equals("content"))
+                {
+                    <a class="text-decoration-none text-white "
+                       asp-action="Index"
+                       asp-route-sortOrder="content_desc">
+                        content ▲
+                    </a>
+                }
+                else
+                {
+                    <a class="text-decoration-none text-white"
+                       asp-action="Index"
+                       asp-route-sortOrder="content">
+                        content ▼
+                    </a>
+                }
             </th>
-            <th>
-                Status
+            <th class="nav-item">
+                @if (ViewData["order"].Equals("status"))
+                {
+                    <a class="text-decoration-none text-white "
+                       asp-action="Index"
+                       asp-route-sortOrder="status_desc">
+                        status ▲
+                    </a>
+                }
+                else
+                {
+                    <a class="text-decoration-none text-white"
+                       asp-action="Index"
+                       asp-route-sortOrder="status">
+                        status ▼
+                    </a>
+                }
             </th>
             <th></th>
         </tr>

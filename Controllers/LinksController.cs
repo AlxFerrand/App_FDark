@@ -23,9 +23,16 @@ namespace App_FDark.Controllers
         }
 
         // GET: Links
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder)
         {
-            List<ResourceAdminViewModel> vm = _resourcesServices.CreateResourceAdminViewModel(_context.Links.ToList());
+            //Check parameters
+            
+
+            //Find Resources
+            List<ResourceAdminViewModel> vm = _resourcesServices.CreateResourceAdminViewModel(_context.Links.ToList(),sortOrder);
+
+            //Return
+            ViewData["order"] = String.IsNullOrEmpty(sortOrder) ? "id" : sortOrder;
             return View(vm);
         }
 

@@ -83,7 +83,7 @@ namespace App_FDark.Services.concretServices
             return imageListVm;
         }
 
-        public List<ResourceAdminViewModel> CreateResourceAdminViewModel(List<Links> linksList)
+        public List<ResourceAdminViewModel> CreateResourceAdminViewModel(List<Links> linksList,string order)
         {
             List <ResourceAdminViewModel> resourcesList = new List<ResourceAdminViewModel>();
             foreach (var l in linksList)
@@ -99,6 +99,7 @@ namespace App_FDark.Services.concretServices
 
                 resourcesList.Add(new ResourceAdminViewModel(id, label, picture, url, description, content, status, dataType));
             }
+            resourcesList = OrderResourcesList(resourcesList, order);
             return resourcesList;
         }
 
@@ -131,6 +132,40 @@ namespace App_FDark.Services.concretServices
                 stringToTruncate = stringToTruncate.Substring(0, length) + "...";
             }
             return stringToTruncate;
+        }
+        public List<ResourceAdminViewModel> OrderResourcesList(List<ResourceAdminViewModel> resourcesList, string order)
+        {
+            switch (order)
+            {
+                case "label":
+                    resourcesList = resourcesList.OrderBy(r => r.Label).ToList();
+                    break;
+                case "content":
+                    resourcesList = resourcesList.OrderBy(r => r.Content).ToList();
+                    break;
+                case "status":
+                    resourcesList = resourcesList.OrderBy(r => r.Status).ToList();
+                    break;
+                case "dataType":
+                    resourcesList = resourcesList.OrderBy(r => r.DataType).ToList();
+                    break;
+                case "label_desc":
+                    resourcesList = resourcesList.OrderByDescending(r => r.Label).ToList();
+                    break;
+                case "content_desc":
+                    resourcesList = resourcesList.OrderByDescending(r => r.Content).ToList();
+                    break;
+                case "status_desc":
+                    resourcesList = resourcesList.OrderByDescending(r => r.Status).ToList();
+                    break;
+                case "dataType_desc":
+                    resourcesList = resourcesList.OrderByDescending(r => r.DataType).ToList();
+                    break;
+                default:
+                    resourcesList = resourcesList.OrderBy(r => r.Id).ToList();
+                    break;
+            }
+            return resourcesList;
         }
     }
 }
