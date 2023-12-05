@@ -130,3 +130,6 @@ table {
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+.hidden{
+    display : none
+}

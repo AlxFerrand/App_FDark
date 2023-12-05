@@ -1,7 +1,10 @@
 ﻿using App_FDark.Data;
 using App_FDark.Models;
 using App_FDark.Services.abstractServices;
+using Microsoft.Data.SqlClient;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Security.Policy;
 
 namespace App_FDark.Services.concretServices
@@ -83,9 +86,60 @@ namespace App_FDark.Services.concretServices
             return imageListVm;
         }
 
-        public List<ResourceAdminViewModel> CreateResourceAdminViewModel(List<Links> linksList,string order)
+        public List<ResourceAdminViewModel> CreateResourceAdminViewModel(string order,string dataTypeSort,int statusId,int extId,int contentId)
         {
-            List <ResourceAdminViewModel> resourcesList = new List<ResourceAdminViewModel>();
+            List<Links> linksList = new List<Links>();
+            if (contentId != 0)
+            {
+                linksList = _context.Links.Where(l => l.ContentId == contentId).ToList();
+            }
+            else
+            {
+                if (extId != 0)
+                {
+                    List<Content> contentList = _context.Content.Where(c=>c.ExtensionId == extId).ToList();
+                    foreach(Content content in contentList)
+                    {
+                        linksList.AddRange(_context.Links.Where(l=>l.ContentId == content.Id).ToList());
+                    }
+                }
+            }
+            if(linksList.Count == 0)
+            {
+                if (!String.IsNullOrEmpty(dataTypeSort))
+                {
+                    linksList = _context.Links.Where(l => l.DataType.Equals(dataTypeSort)).ToList();
+                }
+            }
+            else
+            {
+                if (!String.IsNullOrEmpty(dataTypeSort))
+                {
+                    linksList = linksList.Where(l => l.DataType.Equals(dataTypeSort)).ToList();
+                }
+            }
+            if (linksList.Count == 0)
+            {
+                if (statusId != 0)
+                {
+                    linksList = _context.Links.Where(l => l.Status == statusId).ToList();
+                }
+            }
+            else
+            {
+                if (statusId != 0)
+                {
+                    linksList = linksList.Where(l => l.Status == statusId).ToList();
+                }
+            }
+
+            if (String.IsNullOrEmpty(dataTypeSort) && statusId==0 && extId==0 && contentId==0)
+            {
+                linksList = _context.Links.ToList();
+            }
+
+
+                List<ResourceAdminViewModel> resourcesList = new List<ResourceAdminViewModel>();
             foreach (var l in linksList)
             {
                 int id = l.Id;
@@ -94,7 +148,7 @@ namespace App_FDark.Services.concretServices
                 string url = TruncateString(l.Url,40);
                 string description = TruncateString(l.Description,40);
                 string content = _context.Content.Where(c => c.Id == l.ContentId).FirstOrDefault().Name;
-                string status = DefineResourceStatus(l.Status);
+                string status = StatusDictionary.statusDictionary[l.Status];
                 string dataType = l.DataType;
 
                 resourcesList.Add(new ResourceAdminViewModel(id, label, picture, url, description, content, status, dataType));
@@ -103,28 +157,6 @@ namespace App_FDark.Services.concretServices
             return resourcesList;
         }
 
-        public string DefineResourceStatus (int status)
-        {
-            switch (status)
-            {
-                case 1:
-                    return "Proposé";
-                    break;
-                case 2:
-                    return "Vérifié";
-                    break;
-                case 3:
-                    return "Accepté";
-                    break;
-                case 4:
-                    return "Archivé";
-                    break;
-                default:
-                    return "Non definis";
-                    break;
-            }
-
-        }
         public string TruncateString (string stringToTruncate, int length)
         {
             if (!(String.IsNullOrEmpty(stringToTruncate)) &&(stringToTruncate.Length > length))

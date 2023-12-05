@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using App_FDark.Data;
 using App_FDark.Models;
 using App_FDark.Services.abstractServices;
+using App_FDark.Services.concretServices;
+using System.Text.Json;
 
 namespace App_FDark.Controllers
 {
@@ -23,15 +21,63 @@ namespace App_FDark.Controllers
         }
 
         // GET: Links
-        public async Task<IActionResult> Index(string sortOrder)
+        public async Task<IActionResult> Index(string sortOrder, string dataType, string status, int extId, int contentId)
         {
-            //Check parameters
             
+            //Check parameters
+            if (!String.IsNullOrEmpty(dataType))
+            { 
+                if (!DataTypeDictionary.dataTypeDictionary.ContainsValue(dataType))
+                {
+                    return Redirect("Home/index");
+                }
+            }
+            int statusInt = 0;
+            if (!String.IsNullOrEmpty(status))
+            {
+                if (StatusDictionary.statusDictionary.ContainsValue(status))
+                {
+                    statusInt = StatusDictionary.statusDictionary.Where(kvp=>kvp.Value.Equals(status)).Select(kvp=>kvp.Key).FirstOrDefault();
+                }
+                else
+                {
+                    return Redirect("Home/index");
+                }
+            }
+            if (extId != 0)
+            {
+                try
+                {
+                    _context.Extension.Find(extId);
+                }
+                catch (Exception ex)
+                {
+                    return Redirect("Home/index");
+                }
+            }
+            if (contentId != 0)
+            {
+                try
+                {
+                    _context.Content.Find(contentId);
+                }
+                catch (Exception ex)
+                {
+                    return Redirect("Home/index");
+                }
+            }
 
             //Find Resources
-            List<ResourceAdminViewModel> vm = _resourcesServices.CreateResourceAdminViewModel(_context.Links.ToList(),sortOrder);
+            List<ResourceAdminViewModel> vm = _resourcesServices.CreateResourceAdminViewModel(sortOrder, dataType, statusInt, extId,contentId);
 
             //Return
+            ViewData["dataTypeList"] = new SelectList(DataTypeDictionary.dataTypeDictionary.Values,dataType);
+            ViewData["ExtensionList"] = new SelectList(_context.Extension.ToList(),"Id","Name",extId);
+            ViewData["statusList"] = new SelectList(StatusDictionary.statusDictionary.Values,status);
+            ViewData["contentSelected"] = contentId;
+            ViewData["statusSelected"] = status;
+            ViewData["dataTypeSelected"] = dataType;
+            ViewData["extSelected"] = extId;
             ViewData["order"] = String.IsNullOrEmpty(sortOrder) ? "id" : sortOrder;
             return View(vm);
         }
@@ -167,6 +213,13 @@ namespace App_FDark.Controllers
         private bool LinksExists(int id)
         {
           return (_context.Links?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        public string GetContentList(int catId)
+        {
+            List<Content> contentList = _context.Content.Where(c => c.ExtensionId == catId).ToList();
+            Console.WriteLine(JsonSerializer.Serialize(contentList));
+            return JsonSerializer.Serialize(contentList) ;
         }
     }
 }

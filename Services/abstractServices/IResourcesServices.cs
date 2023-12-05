@@ -1,4 +1,5 @@
 ﻿using App_FDark.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace App_FDark.Services.abstractServices
 {
@@ -9,6 +10,6 @@ namespace App_FDark.Services.abstractServices
         public List<ResourceSite> CreateSiteList(List<Links> linksList);
         public List<ResourceImage> CreateImageList(List<Links> linksList);
 
-        public List<ResourceAdminViewModel> CreateResourceAdminViewModel(List<Links> linksList,string order);
+        public List<ResourceAdminViewModel> CreateResourceAdminViewModel(string order,string dataTypeSort,int statusId,int extId,int contentId);
     }
 }
