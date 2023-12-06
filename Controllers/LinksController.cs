@@ -6,6 +6,7 @@ using App_FDark.Models;
 using App_FDark.Services.abstractServices;
 using App_FDark.Services.concretServices;
 using System.Text.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace App_FDark.Controllers
 {
@@ -103,6 +104,8 @@ namespace App_FDark.Controllers
         // GET: Links/Create
         public IActionResult Create()
         {
+            ViewData["ExtensionList"] = new SelectList(_context.Extension.ToList(), "Id", "Name");
+            ViewData["dataTypeList"] = new SelectList(DataTypeDictionary.dataTypeDictionary.Values);
             return View();
         }
 

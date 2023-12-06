@@ -131,5 +131,12 @@ table {
     text-overflow: ellipsis;
 }
 .hidden{
-    display : none
+    display : none;
+}
+
+.options:hover {
+    transform: scale(1.3);
+    text-decoration: underline;
+    text-decoration-color: white;
+    background-color : rgb(107, 107, 107);
 }
