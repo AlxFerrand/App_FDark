@@ -12,9 +12,11 @@ namespace App_FDark.Services.concretServices
     public class ResourcesServices : IResourcesServices
     {
         private readonly ApplicationDbContext _context;
-        public ResourcesServices(ApplicationDbContext context) 
+        private readonly ISaveFilesService _saveFilesService;
+        public ResourcesServices(ApplicationDbContext context, ISaveFilesService saveFilesService) 
         {
             _context = context;
+            _saveFilesService = saveFilesService;
         }
         public CatalogViewModel CreateCatalogViewModel(List<Links> linksList)
         {
@@ -66,7 +68,7 @@ namespace App_FDark.Services.concretServices
         public List<ResourceImage> CreateImageList(List<Links> linksList)
         {
             List<ResourceImage> imageListVm = new List<ResourceImage>();
-            List<Links> imageList = linksList.Where(l => l.DataType == "image").ToList();
+            List<Links> imageList = linksList.Where(l => l.DataType == "img").ToList();
             foreach (var l in imageList)
             {
                 ResourceImage image = new ResourceImage();
@@ -198,6 +200,42 @@ namespace App_FDark.Services.concretServices
                     break;
             }
             return resourcesList;
+        }
+
+        public Links CreateNewRessource(string dataType, string Label, string Url, string Description, int contentId, List<IFormFile> files)
+        {
+            Links newLink = new Links();
+            newLink.Label = Label;
+            newLink.Description = Description;
+            newLink.ContentId = contentId;
+            newLink.DataType = dataType;
+            newLink.Status = 1;
+
+            if (dataType.Equals("video") || dataType.Equals("site"))
+            {
+                newLink.Url = Url;
+            }
+            if (dataType.Equals("site"))
+            {
+                newLink.Picture = _saveFilesService.SaveFileToImgDirectory(files[0],contentId + "_");
+            }
+            if (dataType.Equals("img"))
+            {
+                int index = 0;
+                foreach (IFormFile file in files)
+                {
+                    if (!String.IsNullOrEmpty(newLink.Picture))
+                    {
+                        newLink.Picture = newLink.Picture + "," + _saveFilesService.SaveFileToImgDirectory(files[0], contentId + "_");
+                    }
+                    else 
+                    {
+                        newLink.Picture = _saveFilesService.SaveFileToImgDirectory(files[0], contentId + "_");
+                    }  
+                }
+            }
+            return newLink;
+            
         }
     }
 }

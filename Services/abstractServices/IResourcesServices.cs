@@ -11,5 +11,6 @@ namespace App_FDark.Services.abstractServices
         public List<ResourceImage> CreateImageList(List<Links> linksList);
 
         public List<ResourceAdminViewModel> CreateResourceAdminViewModel(string order,string dataTypeSort,int statusId,int extId,int contentId);
+        public Links CreateNewRessource(string dataType, string Label, string Url, string Description, int contentId, List<IFormFile> files);
     }
 }

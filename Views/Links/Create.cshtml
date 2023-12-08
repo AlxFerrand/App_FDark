@@ -26,18 +26,13 @@
                 <span asp-validation-for="Label" class="text-danger"></span>
             </div>
             <div id="picture" class="form-group hidden">
-                <label asp-for="Picture" class="control-label">Image de couverture</label>
-                <input type="file" accept="image/png, image/jpg, image/jpeg" asp-for="Picture" class="form-control" />
-                <span asp-validation-for="Picture" class="text-danger"></span>
-            </div>
-            <div id="pictureMulti" class="form-group hidden">
                 <label asp-for="Picture" class="control-label">Images</label>
                 <input type="file" accept="image/png, image/jpg, image/jpeg" multiple asp-for="Picture" class="form-control" />
                 <span asp-validation-for="Picture" class="text-danger"></span>
             </div>
             <div id="url" class="form-group hidden">
                 <label asp-for="Url" class="control-label">Url</label>
-                <input asp-for="Url" class="form-control" />
+                <input asp-for="Url" class="form-control" value="url" />
                 <span asp-validation-for="Url" class="text-danger"></span>
             </div>
             <div id="description" class="form-group hidden">
@@ -47,7 +42,7 @@
             </div>
             <div id="extension" class="form-group hidden">
                 <label for="extId" class="form-label">Categorie</label>
-                <select id="categorySelect" class="form-control" asp-items="ViewBag.ExtensionList" name="extId" onchange="GetContentList()">
+                <select id="categorySelect" class="form-control" asp-items="ViewBag.ExtensionList" onchange="GetContentList()">
                     <option value="0">All</option>
                 </select>
             </div>

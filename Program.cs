@@ -19,6 +19,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages()
     .AddRazorRuntimeCompilation();
 builder.Services.AddScoped<IResourcesServices, ResourcesServices>();
+builder.Services.AddScoped<ISaveFilesService, SaveFilesService>();
 
 var app = builder.Build();
 

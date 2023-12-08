@@ -7,6 +7,8 @@ using App_FDark.Services.abstractServices;
 using App_FDark.Services.concretServices;
 using System.Text.Json;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Policy;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace App_FDark.Controllers
 {
@@ -114,15 +116,48 @@ namespace App_FDark.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Label,Picture,Url,Description,ContentId,Status")] Links links)
+        public async Task<IActionResult> Create(string dataType, string Label, string Url, string Description, int contentId)
         {
+            //Check parametres
+            if (!DataTypeDictionary.dataTypeDictionary.ContainsValue(dataType))
+            {
+                ModelState.AddModelError("DataType", "Type de ressources incorect");
+            }
+            try
+            {
+                string contentName = _context.Content.Find(contentId).Name;
+                if (string.IsNullOrEmpty(contentName))
+                {
+                    throw new Exception();
+                }
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError("ContentId", "Contenu introuvable");
+            }
+
+            //Envoie donnée au service
+            List<IFormFile> files = new List<IFormFile>();
+            foreach (IFormFile file in Request.Form.Files)
+            {
+                files.Add(file);
+            }
+            Links newLink = _resourcesServices.CreateNewRessource(dataType,Label, Url, Description, contentId, files);
+            if (!String.IsNullOrEmpty(newLink.Picture) && newLink.Picture.Contains("Error"))
+            {
+                ModelState.AddModelError("Picture", newLink.Picture);
+            }
             if (ModelState.IsValid)
             {
-                _context.Add(links);
+                _context.Add(newLink);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(links);
+
+            Links link = new Links(1, Label, Url, Description, contentId, 1, dataType);
+            ViewData["ExtensionList"] = new SelectList(_context.Extension.ToList(), "Id", "Name");
+            ViewData["dataTypeList"] = new SelectList(DataTypeDictionary.dataTypeDictionary.Values,link.DataType);
+            return View(link);
         }
 
         // GET: Links/Edit/5

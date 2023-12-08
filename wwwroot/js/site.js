@@ -1,5 +1,6 @@
 ﻿var categorySelect = document.getElementById("categorySelect")
 var contentSelect = document.getElementById("contentSelect")
+var dataTypeSelect = document.getElementById("dataType")
 
 function GetContentList() {
     var liste;
@@ -30,7 +31,6 @@ function ShowForm() {
     if (document.getElementById("dataType").value == "video") {
         document.getElementById("label").style.display = 'block';
         document.getElementById("picture").style.display = 'none';
-        document.getElementById("pictureMulti").style.display = 'none';
         document.getElementById("url").style.display = 'block';
         document.getElementById("description").style.display = 'block';
         document.getElementById("extension").style.display = 'block';
@@ -39,7 +39,6 @@ function ShowForm() {
     if (document.getElementById("dataType").value == "site") {
         document.getElementById("label").style.display = 'block';
         document.getElementById("picture").style.display = 'block';
-        document.getElementById("pictureMulti").style.display = 'none';
         document.getElementById("url").style.display = 'block';
         document.getElementById("description").style.display = 'block';
         document.getElementById("extension").style.display = 'block';
@@ -47,8 +46,7 @@ function ShowForm() {
     }
     if (document.getElementById("dataType").value == "img") {
         document.getElementById("label").style.display = 'block';
-        document.getElementById("picture").style.display = 'none';
-        document.getElementById("pictureMulti").style.display = 'block';
+        document.getElementById("picture").style.display = 'block';
         document.getElementById("url").style.display = 'none';
         document.getElementById("description").style.display = 'block';
         document.getElementById("extension").style.display = 'block';
@@ -57,7 +55,6 @@ function ShowForm() {
     if (document.getElementById("dataType").value == "text") {
         document.getElementById("label").style.display = 'block';
         document.getElementById("picture").style.display = 'none';
-        document.getElementById("pictureMulti").style.display = 'none';
         document.getElementById("url").style.display = 'none';
         document.getElementById("description").style.display = 'block';
         document.getElementById("extension").style.display = 'block';
@@ -66,14 +63,15 @@ function ShowForm() {
     if (document.getElementById("dataType").value == "") {
         document.getElementById("label").style.display = 'none';
         document.getElementById("picture").style.display = 'none';
-        document.getElementById("pictureMulti").style.display = 'none';
         document.getElementById("url").style.display = 'none';
         document.getElementById("description").style.display = 'none';
         document.getElementById("extension").style.display = 'none';
         document.getElementById("contentSelectDiv").style.display = 'none';
-    }
-  
-    
+    }   
+}
+
+if (dataTypeSelect.value != "Null") {
+    ShowForm()
 }
 
 if (categorySelect.value != "") {
