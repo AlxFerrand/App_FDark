@@ -4,6 +4,10 @@
     ViewData["Title"] = "Create";
     Layout = "_LayoutAdmin";
 }
+<script type="text/javascript">
+    var contentSelected;
+    contentSelected = @ViewData["contentId"];
+</script>
 
 <h1 class="text-center">Creation d'une Resource</h1>
 
@@ -45,22 +49,22 @@
                 <select id="categorySelect" class="form-control" asp-items="ViewBag.ExtensionList" onchange="GetContentList()">
                     <option value="0">All</option>
                 </select>
+                <span asp-validation-for="ContentId" class="text-danger"></span>
             </div>
             <div id="contentSelectDiv" class="form-group hidden">
                 <label for="contentId" class="form-label">Contenu</label>
                 <select id="contentSelect" class="form-control" name="contentId">
                     <option value="0">All</option>
                 </select>
-                <span asp-validation-for="ContentId" class="text-danger"></span>
             </div>
             <div class="form-group mt-2 text-center">
                 <input type="submit" value="Create" class="btn btn-primary " /> |
-                <a asp-action="Index">Back to List</a>
+                <a href="#" onclick="PageBack()">Back ←</a>
             </div>
         </form>
     </div>
 </div>
-
+<script src="~/js/CreateResource.js" asp-append-version="true"></script>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

@@ -37,9 +37,57 @@ namespace App_FDark.Services.concretServices
             return "Error : Empty file";
         }
 
-        public string SaveFileToMyDirectory(string path, IFormFile file)
+        public string SaveFileToTempDirectory(IFormFile file, string newFileName)
         {
-            throw new NotImplementedException();
+            newFileName = Regex.Replace(newFileName, "[^a-zA-Z0-9_]", "");
+            string uploadPath = Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot", "temp");
+            if (file.Length > 0)
+            {
+                try
+                {
+                    if (CheckMimeTypeImg(file))
+                    {
+                        newFileName = newFileName + DateTime.Now.ToString("yyyy'-'MM'-'dd'T'HH'-'mm'-'ss") + Path.GetExtension(file.FileName).ToLowerInvariant();
+                        string filePath = Path.Combine(uploadPath, newFileName);
+                        using (Stream fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            file.CopyTo(fileStream);
+                        }
+                        return newFileName;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return "Error : MIME Type not good";
+                }
+                return "Error : MIME Type not good";
+            }
+            return "Error : Empty file";
+        }
+
+        public void CleanTempFiles(int id)
+        {
+            string path = Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot", "img");
+            if (Directory.Exists(path))
+            {
+                string[] files = Directory.GetFiles(path);
+                foreach (string file in files)
+                {
+                    if (Path.GetFileName(file).Contains("TEMP_"+id.ToString()))
+                    {
+                        DeleteFileToImgDirectory(Path.GetFileName(file));
+                    }
+                }
+            }
+            
+        }
+        public void CleanStringsFiles(string files)
+        {
+                string[] filesList = files.Split(",");
+                foreach (string file in filesList)
+                {
+                    DeleteFileToImgDirectory(file);
+                }
         }
 
         public void DeleteFileToImgDirectory(string fileName) 

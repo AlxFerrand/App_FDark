@@ -1,0 +1,69 @@
+﻿@model App_FDark.Models.ResourceImage
+<article class="col-xl-10 col-md-6 col-10 p-2">
+    <!-- Déclaration du composant -->
+    <div class="card bg-dark shadow">
+        <div class="border-bottom">
+            <div class="row justify-content-between align-items-center ">
+                <div class="col-9 ms-1">
+                    <a href="#" target="_blank" class="text-truncate text-truncate--2 text-decoration-none text-white"><h4>@Model.Label</h4></a>
+                </div>
+                <div class="col">
+                    <div class="d-flex justify-content-end p-2">
+                        <div class="pb-1">
+                            <button class="btn" type="button">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 128 512">
+                                    <style>
+                                        svg {
+                                            fill: #424243
+                                        }</style>
+                                    <path d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Image située en haut -->
+        @if (Model.Pictures.Count() > 1)
+        {
+            <div class="card-img-container row p-2">
+                <div class="col pe-1 image1">
+                    <a href="#" target="_blank">
+                        <img class="image1 rounded-2 ps-1"
+                             src="/img/@Model.Pictures[0]" />
+                    </a>
+                </div>
+                <div class="col ps-1 pe-1 image1">
+                    <a href="#" target="_blank">
+                        <img class=" image2 rounded-2"
+                             src="/img/@Model.Pictures[1]" />
+                    </a>
+                    @if (Model.Pictures.Count() > 2)
+                    {
+                        <a href="#" target="_blank">
+                            <img class=" image3 rounded-2"
+                                 src="/img/@Model.Pictures[2]" />
+                        </a>
+                    }
+                </div>
+            </div>
+        }
+        @if (Model.Pictures.Count() == 1)
+        {
+            <div class="card-img-container p-2">
+                <a href="#" target="_blank">
+                    <img class="card-image rounded-2"
+                         src="/img/@Model.Pictures[0]" />
+                </a>
+            </div>
+        }
+        <!-- Corps de la carte -->
+        <div class="card-body">
+            <!-- Titre -->
+            <div class="bg-light h-100 rounded-3 p-2">
+                <p class="card-description text-truncate text-truncate--2">@Model.Description</p>
+            </div>
+        </div>
+    </div>
+</article>

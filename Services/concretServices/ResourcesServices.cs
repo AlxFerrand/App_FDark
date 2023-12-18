@@ -1,9 +1,13 @@
 ﻿using App_FDark.Data;
 using App_FDark.Models;
 using App_FDark.Services.abstractServices;
+using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore.Migrations;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Security.Policy;
 
@@ -33,17 +37,7 @@ namespace App_FDark.Services.concretServices
             List<Links> videoLinksList = linksList.Where(l => l.DataType == "video").ToList();
             foreach (var l in videoLinksList)
             {
-                ResourceVideo video = new ResourceVideo();
-                video.Label = l.Label;
-                video.Url = l.Url;
-                video.Description = l.Description;
-                int startIndex = l.Url.LastIndexOf("v=") + 2;
-                int endIndex = l.Url.Length-startIndex;
-                if (l.Url.Substring(startIndex,endIndex).Contains("&"))
-                {
-                    endIndex = l.Url.LastIndexOf("&") - startIndex;
-                }
-                video.VideoId = l.Url.Substring(startIndex,endIndex);
+                ResourceVideo video = CreateVideoResource(l.Label, l.Url, l.Description);
                 videoListVm.Add(video);
             }
             return videoListVm;
@@ -55,11 +49,7 @@ namespace App_FDark.Services.concretServices
             List<Links> siteList = linksList.Where(l => l.DataType == "site").ToList();
             foreach (var l in siteList)
             {
-                ResourceSite site = new ResourceSite();
-                site.Label = l.Label;
-                site.Url = l.Url;
-                site.Picture = l.Picture;
-                site.Description = l.Description;
+                ResourceSite site = CreateSiteResource(l.Label,l.Url,l.Description,l.Picture);
                 siteListVm.Add(site);
             }
             return siteListVm;
@@ -71,21 +61,54 @@ namespace App_FDark.Services.concretServices
             List<Links> imageList = linksList.Where(l => l.DataType == "img").ToList();
             foreach (var l in imageList)
             {
-                ResourceImage image = new ResourceImage();
-                image.Label = l.Label;
-                image.Description = l.Description;
-                if (!String.IsNullOrEmpty(l.Picture))
-                {
-                    image.Pictures = l.Picture.Split(',');
-                }
-                else
-                {
-                    string[] emptyImages = { "" };
-                    image.Pictures = emptyImages;
-                }
+                ResourceImage image = CreateImageResource(l.Label,l.Description,l.Picture);
                 imageListVm.Add(image);
             }
             return imageListVm;
+        }
+        public ResourceVideo CreateVideoResource(string label, string url, string description)
+        {
+            ResourceVideo video = new ResourceVideo();
+            video.Label = label;
+            video.Url = url;
+            video.Description = description;
+
+            if ((!String.IsNullOrEmpty(url)) && url.Contains("youtube.com"))
+            {
+                var uri = new Uri(url);
+                var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+                video.VideoId = query["v"];
+            }
+            else
+            {
+                video.VideoId = url;
+            }
+            return video;
+        }
+        public ResourceSite CreateSiteResource(string label, string url, string description, string picture)
+        {
+            ResourceSite site = new ResourceSite();
+            site.Label = label;
+            site.Url = url;
+            site.Picture = picture;
+            site.Description = description;
+            return site;
+        }
+        public ResourceImage CreateImageResource(string label, string description, string picture)
+        {
+            ResourceImage image = new ResourceImage();
+            image.Label = label;
+            image.Description = description;
+            if (!String.IsNullOrEmpty(picture))
+            {
+                image.Pictures = picture.Split(',');
+            }
+            else
+            {
+                string[] emptyImages = { "" };
+                image.Pictures = emptyImages;
+            }
+            return image;
         }
 
         public List<ResourceAdminViewModel> CreateResourceAdminViewModel(string order,string dataTypeSort,int statusId,int extId,int contentId)
@@ -217,25 +240,130 @@ namespace App_FDark.Services.concretServices
             }
             if (dataType.Equals("site"))
             {
-                newLink.Picture = _saveFilesService.SaveFileToImgDirectory(files[0],contentId + "_");
+                newLink.Picture = FilesNameConstructor(files[0],contentId.ToString(),false);
             }
             if (dataType.Equals("img"))
             {
-                int index = 0;
-                foreach (IFormFile file in files)
-                {
-                    if (!String.IsNullOrEmpty(newLink.Picture))
-                    {
-                        newLink.Picture = newLink.Picture + "," + _saveFilesService.SaveFileToImgDirectory(files[0], contentId + "_");
-                    }
-                    else 
-                    {
-                        newLink.Picture = _saveFilesService.SaveFileToImgDirectory(files[0], contentId + "_");
-                    }  
-                }
+                newLink.Picture = FilesNameConstructor(files, contentId.ToString(),false);
             }
             return newLink;
             
         }
+        public Links EditResource(Links link, List<IFormFile> files, string oldPicture)
+        {
+            if(files.Count > 0)
+            {
+                if (link.DataType.Equals("site"))
+                {
+                    _saveFilesService.CleanStringsFiles(oldPicture);
+                    link.Picture = FilesNameConstructor(files[0], link.ContentId.ToString(), false);
+                }
+                if (link.DataType.Equals("img"))
+                {
+                    _saveFilesService.CleanStringsFiles(oldPicture);
+                    link.Picture = FilesNameConstructor(files, link.ContentId.ToString(), false);
+                }
+            }
+            return link;
+        }
+        public void DeleteFileResource(int id)
+        {
+            string pictures = _context.Links.Find(id).Picture;
+            _saveFilesService.CleanStringsFiles(pictures);
+        }
+
+        public string FilesNameConstructor(List<IFormFile> files, string prefix, bool temp)
+        {
+            int index = 1;
+            string filesName = "";
+            foreach (IFormFile file in files)
+            {
+                if (!String.IsNullOrEmpty(filesName))
+                {
+                    if (temp)
+                    {
+                        filesName = filesName + "," + _saveFilesService.SaveFileToImgDirectory(file,"TEMP_" + prefix + "_" + index + "_");
+                    }
+                    else
+                    {
+                        filesName = filesName + "," + _saveFilesService.SaveFileToImgDirectory(file, prefix + "_" + index + "_");
+                    }
+                    
+                }
+                else
+                {
+                    if (temp)
+                    {
+                        filesName = _saveFilesService.SaveFileToImgDirectory(file, "TEMP_" + prefix + "_" + index + "_");
+                    }
+                    else
+                    {
+                        filesName = _saveFilesService.SaveFileToImgDirectory(file, prefix + "_" + index + "_");
+                    }
+                    
+                }
+                index++;
+            }
+            return filesName;
+        }
+        public string FilesNameConstructor(IFormFile file, string prefix, bool temp)
+        {
+            string fileName = "";
+            if (temp)
+            {
+                fileName = _saveFilesService.SaveFileToImgDirectory(file, "TEMP_" + prefix + "_");
+            }
+            else
+            {
+                fileName = _saveFilesService.SaveFileToImgDirectory(file, prefix + "_");
+            }
+            return fileName;
+        }
+
+        public Object MakeSnapResource(int id, string dataType, string label, string url, string description, List<IFormFile> files)
+        {
+            switch (dataType)
+            {
+                case "video":
+                    ResourceVideo video = CreateVideoResource(label, url, description);
+                    return video;
+                    break;
+                case "site":
+                    _saveFilesService.CleanTempFiles(id);
+                    string fileName = "";
+                    if (files.Count == 0)
+                    {
+                        fileName = _context.Links.Find(id).Picture;
+                    }
+                    else
+                    {
+                        fileName = FilesNameConstructor(files[0], id.ToString(),true);
+                    }
+                    ResourceSite site = CreateSiteResource(label, url, description, fileName);
+                    return site;
+                    break;
+                case "img":
+                    _saveFilesService.CleanTempFiles(id);
+                    string filesName = "";
+                    if (files.Count == 0)
+                    {
+                        filesName = _context.Links.Find(id).Picture;
+                    }
+                    else
+                    {
+                        filesName = FilesNameConstructor(files, id.ToString(), true);
+                    }                   
+                    ResourceImage image = CreateImageResource(label,description,filesName);
+                    return image;
+                    break;
+                case "text":
+                    return null;
+                    break;
+                default:
+                    return null;
+                    break;
+            }
+        }
+
     }
 }

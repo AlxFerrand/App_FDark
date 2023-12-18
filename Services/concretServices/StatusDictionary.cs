@@ -4,6 +4,7 @@
     {
         public static Dictionary<int, string> statusDictionary = new Dictionary<int, string>
         {
+            { 0, "NonDéfinis"},
             { 1, "Proposé"},
             { 2, "Vérifié"},
             { 3, "Accepté"},

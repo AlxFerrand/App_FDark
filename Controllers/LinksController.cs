@@ -9,6 +9,7 @@ using System.Text.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Policy;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Diagnostics.Eventing.Reader;
 
 namespace App_FDark.Controllers
 {
@@ -106,6 +107,7 @@ namespace App_FDark.Controllers
         // GET: Links/Create
         public IActionResult Create()
         {
+            ViewData["contentId"] = 0;
             ViewData["ExtensionList"] = new SelectList(_context.Extension.ToList(), "Id", "Name");
             ViewData["dataTypeList"] = new SelectList(DataTypeDictionary.dataTypeDictionary.Values);
             return View();
@@ -125,15 +127,15 @@ namespace App_FDark.Controllers
             }
             try
             {
-                string contentName = _context.Content.Find(contentId).Name;
-                if (string.IsNullOrEmpty(contentName))
+                var content = _context.Content.Find(contentId);
+                if (content == null || string.IsNullOrEmpty(content.Name))
                 {
-                    throw new Exception();
+                    ModelState.AddModelError("ContentId", "Contenu introuvable");
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                ModelState.AddModelError("ContentId", "Contenu introuvable");
+                // Gérer l'exception, loguer, etc., si nécessaire.
             }
 
             //Envoie donnée au service
@@ -153,9 +155,16 @@ namespace App_FDark.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            int extId = 0;
+            if (contentId != 0)
+            {
+                extId = _context.Content.Where(c => c.Id == contentId).FirstOrDefault().ExtensionId;
+            }
+           
 
             Links link = new Links(1, Label, Url, Description, contentId, 1, dataType);
-            ViewData["ExtensionList"] = new SelectList(_context.Extension.ToList(), "Id", "Name");
+            ViewData["contentId"] = contentId;
+            ViewData["ExtensionList"] = new SelectList(_context.Extension.ToList(), "Id", "Name",extId);
             ViewData["dataTypeList"] = new SelectList(DataTypeDictionary.dataTypeDictionary.Values,link.DataType);
             return View(link);
         }
@@ -173,6 +182,9 @@ namespace App_FDark.Controllers
             {
                 return NotFound();
             }
+            int extId = _context.Content.Where(c => c.Id == links.ContentId).FirstOrDefault().ExtensionId;
+            ViewData["ExtensionList"] = new SelectList(_context.Extension.ToList(), "Id", "Name",extId);
+            ViewBag.Redirect = false;
             return View(links);
         }
 
@@ -181,23 +193,47 @@ namespace App_FDark.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Label,Picture,Url,Description,ContentId,Status")] Links links)
+        public async Task<IActionResult> Edit(int Id, [Bind("Id,Label,Url,Description,ContentId,DataType,Status,Picture")]Links link)
         {
-            if (id != links.Id)
+            string oldPicture = String.IsNullOrEmpty(link.Picture)? "null" : link.Picture;
+            //Check parametres
+            try
             {
-                return NotFound();
+                var content = _context.Content.Find(link.ContentId);
+                if (content == null || string.IsNullOrEmpty(content.Name))
+                {
+                    ModelState.AddModelError("ContentId", "Contenu introuvable");
+                }
             }
+            catch (Exception ex)
+            {
+                // Gérer l'exception, loguer, etc., si nécessaire.
+            }
+            //Envoie donnée au service
+            List<IFormFile> files = new List<IFormFile>();
+            foreach (IFormFile file in Request.Form.Files)
+            {
+                files.Add(file);
+            }
+            link = _resourcesServices.EditResource(link,files,oldPicture);
+            if (!String.IsNullOrEmpty(link.Picture) && link.Picture.Contains("Error"))
+            {
+                ModelState.AddModelError("Picture", link.Picture);
+            }
+
+            int extId = _context.Content.Where(c => c.Id == link.ContentId).FirstOrDefault().ExtensionId;
+            ViewData["ExtensionList"] = new SelectList(_context.Extension.ToList(), "Id", "Name", extId);
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(links);
+                    _context.Update(link);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!LinksExists(links.Id))
+                    if (!LinksExists(link.Id))
                     {
                         return NotFound();
                     }
@@ -208,7 +244,8 @@ namespace App_FDark.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(links);
+            ViewBag.Redirect = false;
+            return View(link);
         }
 
         // GET: Links/Delete/5
@@ -242,10 +279,45 @@ namespace App_FDark.Controllers
             if (links != null)
             {
                 _context.Links.Remove(links);
+                _resourcesServices.DeleteFileResource(id);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        //GET: SnapCard/5
+        public async Task<IActionResult> GetSnapCard(int Id,string Label, string Url, string Description,string DataType)
+        {
+            List<IFormFile> files = new List<IFormFile>();
+            foreach (IFormFile file in Request.Form.Files)
+            {
+                files.Add(file);
+            }
+            var snapResource = _resourcesServices.MakeSnapResource(Id,DataType, Label, Url, Description, files);
+            if (snapResource == null)
+            {
+                return null;
+            }
+            switch (DataType)
+            {
+                case "video":
+                    return PartialView("_VideoSnapCard", snapResource);
+                    break;
+                case "site":
+                    return PartialView("_SiteSnapCard", snapResource);
+                    break;
+                case "img":
+                    return PartialView("_ImageSnapCard", snapResource);
+                    break;
+                case "text":
+                    return null;
+                    break;
+                    default:
+                    return null;
+                    break;
+            }
+            
         }
 
         private bool LinksExists(int id)
