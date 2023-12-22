@@ -11,16 +11,14 @@
 
 <h1>Modification de ressource</h1>
 
-<h4>Ressource :</h4>
+<h4>Ressource : @Model.DataType</h4>
 <hr />
-
 <div class="row">
         <div class="col-xl-4">
-            <form id="formVideo" asp-action="Edit" enctype="multipart/form-data">       
+            <form id="form" asp-action="Edit">       
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input type="hidden" asp-for="Id" />
                 <input id="dataType" type="hidden" asp-for="DataType" />
-                <input type="hidden" asp-for="Status" />
                 <div class="form-group">
                     <label asp-for="Label" class="control-label"></label>
                     <input asp-for="Label" class="form-control" />
@@ -40,9 +38,12 @@
             {
                 <div id="picture" class="form-group">
                     <label asp-for="Picture" class="control-label">Image(s) actuel</label>
-                    <input asp-for="Picture" class="form-control" readonly />
-                    <label for="PictureFile" class="control-label">Remplacer Image(s)</label>
-                    <input type="file"  accept="image/png, image/jpg, image/jpeg" multiple name="PictureFile" class="form-control" />
+                    <input id="imagesInput" asp-for="Picture" class="form-control" readonly />
+                    <span>
+                        <button type="button" onclick="loadFiles()" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#fileModal">
+                            Files
+                        </button>
+                    </span>
                     <span asp-validation-for="Picture" class="text-danger"></span>
                 </div>
             }
@@ -64,6 +65,11 @@
                     </select>
                     <span asp-validation-for="ContentId" class="text-danger"></span>
                 </div>
+                <div id="statusDiv" class="form-group">
+                    <label for="Status" class="form-label">Statut</label>
+                    <select id="statusSelect" class="form-control" asp-for="Status" asp-items="ViewBag.StatusList">
+                    </select>
+                </div>
                 <div class="form-group mt-2 text-center">
                     <input type="submit" value="save" class="btn btn-primary " /> |
                     <a href="#" onclick="PageBack()" >Back ←</a>
@@ -79,6 +85,10 @@
     </div>
 </div>
 
+<!-- Modal -->
+<partial name="_FilesModal" />
+<partial name="_AddFilesModal" />
+<script src="~/js/ManageModal.js" asp-append-version="true"></script>
 <script src="~/js/EditResource.js" asp-append-version="true"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
 @section Scripts {

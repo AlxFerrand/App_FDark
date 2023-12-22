@@ -8,13 +8,17 @@
 </div>
 <div class="container-fluid">
     <div class="row justify-content-center">
-        <a class="article col-2 text-decoration-none text-black border border-2 border-dark m-2 rounded-3 shadow-lg" asp-area="" asp-controller="Links" asp-action="Index">
+        <div class="article col-2 border border-2 border-dark m-2 rounded-3 shadow-lg" asp-area="" asp-controller="Links" asp-action="Index">
             <div class="p-1">
-                <h5 class="">Gérer des Ressources</h5>
-                <p>2 nouvelles propositions de ressource</p>
-                <p>Descriptif</p>
+                <a class="article text-decoration-none text-black" asp-area="" asp-controller="Links" asp-action="Index">
+                    <h5 class="">Gérer des Ressources</h5>
+                    <p>2 nouvelles propositions de ressource</p>
+                </a>
+                <a class="article adminTextNav" asp-controller="Links" asp-action="Index" asp-route-status="Proposé">- Resources proposées</a><br />
+                <a class="article adminTextNav" asp-controller="Links" asp-action="Create">- Ajouter une ressource</a><br />
+                <a href="#" class="article adminTextNav" data-bs-toggle="modal" data-bs-target="#addFilesModal">- Ajouter une image</a>
             </div>
-        </a>
+        </div>
         <a href="#" class="article col-2 text-decoration-none text-black border border-2 border-dark m-2 rounded-3 shadow-lg">
         <div class="p-1">
                 <h5 class="">Gérer des Users</h5>
@@ -30,3 +34,5 @@
         </a>
     </div>
 </div>
+<partial name="_AddFilesModal" />
+<script src="~/js/ManageModal.js" asp-append-version="true"></script>

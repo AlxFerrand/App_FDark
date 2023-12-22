@@ -1,0 +1,20 @@
+﻿@model List<string>
+@{
+    ViewData["Title"] = "test";
+    Layout = null;
+}
+    <div class="container-fluid">
+        <div class="row justify-content-start pt-2">
+            @foreach (string file in Model)
+            {
+            <div class="col-2 text-center">
+                <div ondblclick="saveFilesDb('@file.Substring(4)')" onclick="selectFile('@file.Substring(4)')">
+                    <img id="@file.Substring(4)" class="imageList article rounded-2"
+                             src="/@file" />
+                    </div>
+                    <p class="text-center">@file.Substring(4)</p>
+                </div>
+            }
+        </div>
+    </div>
+

@@ -10,6 +10,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Security.Policy;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Diagnostics.Eventing.Reader;
+using System.Text.RegularExpressions;
 
 namespace App_FDark.Controllers
 {
@@ -17,11 +18,13 @@ namespace App_FDark.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IResourcesServices _resourcesServices;
+        private readonly ISaveFilesService _saveFilesService;
 
-        public LinksController(ApplicationDbContext context, IResourcesServices resourcesServices)
+        public LinksController(ApplicationDbContext context, IResourcesServices resourcesServices, ISaveFilesService saveFilesService)
         {
             _context = context;
             _resourcesServices = resourcesServices;
+            _saveFilesService = saveFilesService;
         }
 
         // GET: Links
@@ -118,16 +121,17 @@ namespace App_FDark.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(string dataType, string Label, string Url, string Description, int contentId)
+        public async Task<IActionResult> Create([Bind("Id,Label,Url,Description,ContentId,DataType,Status,Picture")]Links newLink)
         {
             //Check parametres
-            if (!DataTypeDictionary.dataTypeDictionary.ContainsValue(dataType))
+            if (!DataTypeDictionary.dataTypeDictionary.ContainsValue(newLink.DataType))
             {
                 ModelState.AddModelError("DataType", "Type de ressources incorect");
             }
+            newLink.Status = 1;
             try
             {
-                var content = _context.Content.Find(contentId);
+                var content = _context.Content.Find(newLink.ContentId);
                 if (content == null || string.IsNullOrEmpty(content.Name))
                 {
                     ModelState.AddModelError("ContentId", "Contenu introuvable");
@@ -139,16 +143,6 @@ namespace App_FDark.Controllers
             }
 
             //Envoie donnée au service
-            List<IFormFile> files = new List<IFormFile>();
-            foreach (IFormFile file in Request.Form.Files)
-            {
-                files.Add(file);
-            }
-            Links newLink = _resourcesServices.CreateNewRessource(dataType,Label, Url, Description, contentId, files);
-            if (!String.IsNullOrEmpty(newLink.Picture) && newLink.Picture.Contains("Error"))
-            {
-                ModelState.AddModelError("Picture", newLink.Picture);
-            }
             if (ModelState.IsValid)
             {
                 _context.Add(newLink);
@@ -156,14 +150,13 @@ namespace App_FDark.Controllers
                 return RedirectToAction(nameof(Index));
             }
             int extId = 0;
-            if (contentId != 0)
+            if (newLink.ContentId != 0)
             {
-                extId = _context.Content.Where(c => c.Id == contentId).FirstOrDefault().ExtensionId;
+                extId = _context.Content.Where(c => c.Id == newLink.ContentId).FirstOrDefault().ExtensionId;
             }
-           
 
-            Links link = new Links(1, Label, Url, Description, contentId, 1, dataType);
-            ViewData["contentId"] = contentId;
+            Links link = new Links(1, newLink.Label, newLink.Url, newLink.Description, newLink.ContentId, 1, newLink.DataType);
+            ViewData["contentId"] = newLink.ContentId;
             ViewData["ExtensionList"] = new SelectList(_context.Extension.ToList(), "Id", "Name",extId);
             ViewData["dataTypeList"] = new SelectList(DataTypeDictionary.dataTypeDictionary.Values,link.DataType);
             return View(link);
@@ -183,7 +176,9 @@ namespace App_FDark.Controllers
                 return NotFound();
             }
             int extId = _context.Content.Where(c => c.Id == links.ContentId).FirstOrDefault().ExtensionId;
+            List<KeyValuePair<int, string>> statusList = StatusDictionary.statusDictionary.ToList();
             ViewData["ExtensionList"] = new SelectList(_context.Extension.ToList(), "Id", "Name",extId);
+            ViewData["StatusList"] = new SelectList(statusList, "Key", "Value",links.Status);
             ViewBag.Redirect = false;
             return View(links);
         }
@@ -195,7 +190,6 @@ namespace App_FDark.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int Id, [Bind("Id,Label,Url,Description,ContentId,DataType,Status,Picture")]Links link)
         {
-            string oldPicture = String.IsNullOrEmpty(link.Picture)? "null" : link.Picture;
             //Check parametres
             try
             {
@@ -208,17 +202,6 @@ namespace App_FDark.Controllers
             catch (Exception ex)
             {
                 // Gérer l'exception, loguer, etc., si nécessaire.
-            }
-            //Envoie donnée au service
-            List<IFormFile> files = new List<IFormFile>();
-            foreach (IFormFile file in Request.Form.Files)
-            {
-                files.Add(file);
-            }
-            link = _resourcesServices.EditResource(link,files,oldPicture);
-            if (!String.IsNullOrEmpty(link.Picture) && link.Picture.Contains("Error"))
-            {
-                ModelState.AddModelError("Picture", link.Picture);
             }
 
             int extId = _context.Content.Where(c => c.Id == link.ContentId).FirstOrDefault().ExtensionId;
@@ -279,7 +262,6 @@ namespace App_FDark.Controllers
             if (links != null)
             {
                 _context.Links.Remove(links);
-                _resourcesServices.DeleteFileResource(id);
             }
             
             await _context.SaveChangesAsync();
@@ -287,14 +269,9 @@ namespace App_FDark.Controllers
         }
 
         //GET: SnapCard/5
-        public async Task<IActionResult> GetSnapCard(int Id,string Label, string Url, string Description,string DataType)
+        public async Task<IActionResult> GetSnapCard(int Id,string Label, string Url, string Description,string DataType,string Picture)
         {
-            List<IFormFile> files = new List<IFormFile>();
-            foreach (IFormFile file in Request.Form.Files)
-            {
-                files.Add(file);
-            }
-            var snapResource = _resourcesServices.MakeSnapResource(Id,DataType, Label, Url, Description, files);
+            var snapResource = _resourcesServices.MakeSnapResource(Id,DataType, Label, Url, Description, Picture);
             if (snapResource == null)
             {
                 return null;
@@ -320,6 +297,42 @@ namespace App_FDark.Controllers
             
         }
 
+        public string AddPictureFiles(string newPictureLabel)
+        {
+            if (string.IsNullOrEmpty(newPictureLabel))
+            {
+                return "Error : Nom de fichier vide";
+            }
+            else
+            {
+                List<string> picturesList = new List<string>();
+                string path = Path.Combine("wwwroot", "img");
+                if (Directory.Exists(path))
+                {
+                    foreach (string item in Directory.GetFiles(path))
+                    {
+                        picturesList.Add(item.Substring(12));
+                    }
+                }
+                foreach (string item in picturesList)
+                {
+                    string regexLabel = Regex.Replace(newPictureLabel, "[^a-zA-Z0-9_]", "");
+                    if (item.StartsWith(regexLabel + ".", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return "Error : Nom de fichier déjà utilisé";
+                    }
+                }
+            }
+            if (Request.Form.Files.Count() <= 0)
+            {
+                return "Error : pas de fichiers";
+            }
+            foreach (var file in Request.Form.Files)
+            {
+                return _saveFilesService.SaveFileToImgDirectory(file, newPictureLabel);
+            }
+            return "Error : interne";
+        }
         private bool LinksExists(int id)
         {
           return (_context.Links?.Any(e => e.Id == id)).GetValueOrDefault();

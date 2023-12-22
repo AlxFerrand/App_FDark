@@ -85,13 +85,13 @@ namespace App_FDark.Services.concretServices
             }
             return video;
         }
-        public ResourceSite CreateSiteResource(string label, string url, string description, string picture)
+        public ResourceSite CreateSiteResource(string label, string url, string description, string pictures)
         {
             ResourceSite site = new ResourceSite();
             site.Label = label;
             site.Url = url;
-            site.Picture = picture;
             site.Description = description;
+            site.Picture = pictures.Split(",")[0];
             return site;
         }
         public ResourceImage CreateImageResource(string label, string description, string picture)
@@ -320,7 +320,7 @@ namespace App_FDark.Services.concretServices
             return fileName;
         }
 
-        public Object MakeSnapResource(int id, string dataType, string label, string url, string description, List<IFormFile> files)
+        public Object MakeSnapResource(int id, string dataType, string label, string url, string description, string pictures)
         {
             switch (dataType)
             {
@@ -329,31 +329,11 @@ namespace App_FDark.Services.concretServices
                     return video;
                     break;
                 case "site":
-                    _saveFilesService.CleanTempFiles(id);
-                    string fileName = "";
-                    if (files.Count == 0)
-                    {
-                        fileName = _context.Links.Find(id).Picture;
-                    }
-                    else
-                    {
-                        fileName = FilesNameConstructor(files[0], id.ToString(),true);
-                    }
-                    ResourceSite site = CreateSiteResource(label, url, description, fileName);
+                    ResourceSite site = CreateSiteResource(label, url, description, pictures);   
                     return site;
                     break;
-                case "img":
-                    _saveFilesService.CleanTempFiles(id);
-                    string filesName = "";
-                    if (files.Count == 0)
-                    {
-                        filesName = _context.Links.Find(id).Picture;
-                    }
-                    else
-                    {
-                        filesName = FilesNameConstructor(files, id.ToString(), true);
-                    }                   
-                    ResourceImage image = CreateImageResource(label,description,filesName);
+                case "img":                  
+                    ResourceImage image = CreateImageResource(label,description,pictures);
                     return image;
                     break;
                 case "text":

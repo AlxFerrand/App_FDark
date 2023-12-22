@@ -20,7 +20,7 @@ namespace App_FDark.Services.concretServices
                 {
                     if (CheckMimeTypeImg(file))
                     {
-                        newFileName = newFileName + DateTime.Now.ToString("yyyy'-'MM'-'dd'T'HH'-'mm'-'ss") + Path.GetExtension(file.FileName).ToLowerInvariant();
+                        newFileName = newFileName + Path.GetExtension(file.FileName).ToLowerInvariant();
                         string filePath = Path.Combine(uploadPath, newFileName);
                         using (Stream fileStream = new FileStream(filePath, FileMode.Create))
                         {
