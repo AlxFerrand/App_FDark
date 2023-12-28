@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - App_FDark</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/App_FDark.styles.css" asp-append-version="true" />
+</head>
+<body class="">
+    <header>
+        <div class="container-fluid">
+        <div class="row bg-dark justify-content-between align-item-center">
+            <div class="col-2">
+                <h2 class="text-white text-center"><img id="logo" src="~/img/logofd.png" /> Feather Dark</h2>
+            </div>
+            <nav class="col navbar-expand-sm align-items-end justify-content-end">
+                <div class="container-fluid">
+                    <partial name="_LoginPartial" />
+                </div>
+            </nav>
+        </div>
+        <div class="row justify-content-center text-center">
+            <img id="layer1" class="p-0" src="~/img/732.jpg" />
+            <img id="layer2" src="~/img/logo_ffxiv.png" />
+        </div>
+        <div class="row navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-purple-fdark border-bottom box-shadow">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarExtension"
+                        aria-expanded="false" aria-label="Toggle Extension">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="row navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <div class="col container-fluid">
+                        <ul class="navbar-nav flex-grow-1 text-nowrap">
+                            <li class="nav-item">
+                                <a class="nav-link text-white fw-bold fs-6" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white fw-bold fs-6" asp-area="" asp-controller="Home" asp-route-extId="5" asp-action="ContentCatalog">Catalogue |</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white fw-bold fs-6" asp-area="" asp-controller="Links" asp-action="Index">Gestion ressources
+                                    <sup class="bg-light rounded-circle text-black p-1"> 2</sup>
+                                    </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white fw-bold fs-6" asp-area="" asp-controller="" asp-action="">Gestion utilisateurs
+                                    <sup class="bg-light rounded-circle text-black p-1"> 5</sup>
+                                </a>
+
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white fw-bold fs-6" asp-area="" asp-controller="Home" asp-action="DiversManage">Gestion Divers</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </header>
+    <div class="container-fluid">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2023 - App_FDark -
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+

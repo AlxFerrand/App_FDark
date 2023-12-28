@@ -92,11 +92,15 @@ body {
 article:hover {
     transform: scale(1.02);
 }
+.article:hover {
+    transform: scale(1.02);
+    cursor:pointer;
+}
 
 .nav-item:hover {
     transform: scale(1.08);
     text-decoration: underline;
-    text-decoration-color : white;
+    text-decoration-color: white;
 }
 
 .card-img-container.image-content {
@@ -116,4 +120,50 @@ article:hover {
 }
 .bg-purple-fdark{
     background-color : rgb(111, 60, 130)
+}
+
+table {
+    table-layout: auto;
+}
+
+.short-text {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.hidden{
+    display : none;
+}
+
+.options:hover {
+    transform: scale(1.3);
+    text-decoration: underline;
+    text-decoration-color: white;
+    background-color : rgb(107, 107, 107);
+}
+.imageList {
+    height: 300px;
+    max-height: 125px;
+    max-width : 200px
+}
+.cadreList{
+    width:75vw;
+}
+.bg-shadow{
+    background-color : rgba(0,0,0,0.5);
+}
+.modal-dialog{
+    max-width:75%;
+}
+
+.adminTextNav{
+    text-decoration:none;
+    font-weight:bold;
+    color:rgb(80, 31, 99)
+}
+
+.scrollable-List {
+    width: 100%;
+    height: 50vh; 
+    overflow: auto; 
 }

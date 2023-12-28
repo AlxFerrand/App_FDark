@@ -1,0 +1,29 @@
+﻿<div class="modal fade" id="addFilesModal" tabindex="1" role="dialog" aria-labelledby="addFilesModalTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addFilesModalTitle">Ajout d'images</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="addFileModalContent" class="modal-body">
+                <form id="addFilesForm" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="newPictureFile" class="control-label">Choisissez un fichier :</label>
+                        <input type="file" name="newPictureFile" class="form-control" accept="jpg,png,jpeg" />
+                    </div>
+                    <div class="form-group">
+                        <label for="newPictureLabel" class="control-label">Nom de l'image :</label>
+                        <small>Charractères spéciaux et accents supprimés, pour l'espace mettre "_"</small>
+                        <input name="newPictureLabel" class="form-control" />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer justify-content-center align-items-center">
+                <button type="button" onclick="AddNewFiles()" data-bs-dismiss="modal" class="btn btn-primary">Ajouter</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

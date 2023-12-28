@@ -1,0 +1,23 @@
+﻿<div class="modal fade" id="fileModal" tabindex="1" role="dialog" aria-labelledby="fileModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="fileModalTitle">Images disponibles</h5>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addFilesModal">
+                    Ajouter une image +
+                </button>
+                <button type="button" onclick="cleanFiles()" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="modalContent" class="modal-body scrollable-List">
+            </div>
+            <div class="row modal-footer justify-content-center align-items-center">
+                <label for="selectedFiles" class="col-2">Images selectionnées</label>
+                <input id="selectedFiles" for="selectedFiles" class="col" readonly />
+                <button type="button" onclick="saveFiles()" data-bs-dismiss="modal" class="col-2 btn btn-primary">Save changes</button>
+                <button type="button" onclick="cleanFiles()" class="col-2 btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

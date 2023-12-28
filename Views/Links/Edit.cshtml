@@ -2,58 +2,95 @@
 
 @{
     ViewData["Title"] = "Edit";
+    Layout = "_LayoutAdmin";
 }
+<script type="text/javascript">
+    let contentSelected = @Model.ContentId;
+    let redirect = @ViewBag.Redirect;
+</script>
 
-<h1>Edit</h1>
+<h1>Modification de ressource</h1>
 
-<h4>Links</h4>
+<h4>Ressource : @Model.DataType</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Label" class="control-label"></label>
-                <input asp-for="Label" class="form-control" />
-                <span asp-validation-for="Label" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Picture" class="control-label"></label>
-                <input asp-for="Picture" class="form-control" />
-                <span asp-validation-for="Picture" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Url" class="control-label"></label>
-                <input asp-for="Url" class="form-control" />
-                <span asp-validation-for="Url" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ContentId" class="control-label"></label>
-                <input asp-for="ContentId" class="form-control" />
-                <span asp-validation-for="ContentId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <input asp-for="Status" class="form-control" />
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        <div class="col-xl-4">
+            <form id="form" asp-action="Edit">       
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <input id="dataType" type="hidden" asp-for="DataType" />
+                <div class="form-group">
+                    <label asp-for="Label" class="control-label"></label>
+                    <input asp-for="Label" class="form-control" />
+                    <span asp-validation-for="Label" class="text-danger"></span>
+                </div>
+            @if (Model.DataType.Equals("video") || Model.DataType.Equals("site"))
+            {
+                    <div class="form-group">
+                        <label asp-for="Url" class="control-label"></label>
+                        <input asp-for="Url" class="form-control" />
+                        <span asp-validation-for="Url" class="text-danger"></span>
+                    </div>
+            }else{
+                <input type="hidden" asp-for="Url" />
+            }
+            @if (Model.DataType.Equals("img") || Model.DataType.Equals("site"))
+            {
+                <div id="picture" class="form-group">
+                    <label asp-for="Picture" class="control-label">Image(s) actuel</label>
+                    <input id="imagesInput" asp-for="Picture" class="form-control" readonly />
+                    <span>
+                        <button type="button" onclick="loadFiles()" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#fileModal">
+                            Files
+                        </button>
+                    </span>
+                    <span asp-validation-for="Picture" class="text-danger"></span>
+                </div>
+            }
+                <div class="form-group">
+                    <label asp-for="Description" class="control-label"></label>
+                    <input asp-for="Description" class="form-control" />
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                <div id="extension" class="form-group">
+                    <label for="extId" class="form-label">Categorie</label>
+                    <select id="categorySelect" class="form-control" asp-items="ViewBag.ExtensionList" onchange="GetContentList()">
+                        <option value="0">All</option>
+                    </select>
+                </div>
+                <div id="contentSelectDiv" class="form-group">
+                    <label for="contentId" class="form-label">Contenu</label>
+                    <select id="contentSelect" class="form-control" asp-for="ContentId">
+                        <option value="0">All</option>
+                    </select>
+                    <span asp-validation-for="ContentId" class="text-danger"></span>
+                </div>
+                <div id="statusDiv" class="form-group">
+                    <label for="Status" class="form-label">Statut</label>
+                    <select id="statusSelect" class="form-control" asp-for="Status" asp-items="ViewBag.StatusList">
+                    </select>
+                </div>
+                <div class="form-group mt-2 text-center">
+                    <input type="submit" value="save" class="btn btn-primary " /> |
+                    <a href="#" onclick="PageBack()" >Back ←</a>
+                </div>
+            </form>
+        </div>
+    <div class="col-xl-4  mt-3 mb-3 mt-xl-0 d-flex align-items-center">
+        <div class="col text-center">
+            <button type="button" onclick="showSnap()" class="btn btn-primary ">Aperçu →</button>
+        </div>
+    </div>
+    <div id="snapCard" class="col d-flex justify-content-center hidden">
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
+<!-- Modal -->
+<partial name="_FilesModal" />
+<partial name="_AddFilesModal" />
+<script src="~/js/ManageModal.js" asp-append-version="true"></script>
+<script src="~/js/EditResource.js" asp-append-version="true"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

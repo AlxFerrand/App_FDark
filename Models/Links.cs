@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.Diagnostics.CodeAnalysis;
 
 namespace App_FDark.Models
 {
@@ -7,9 +8,11 @@ namespace App_FDark.Models
         public int Id { get; set; }
         public string Label { get; set; }
         [MaybeNull]
+        [ValidateNever]
         public string Picture { get; set; }
         [MaybeNull]
-        public string Url { get; set; }
+        [ValidateNever]
+        public string Url { get; set; } = string.Empty;
         public string Description { get; set; }
         public int ContentId { get; set; }
         public int Status { get; set; }

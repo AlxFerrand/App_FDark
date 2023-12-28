@@ -1,0 +1,38 @@
+﻿@{
+    ViewData["Title"] = "Home Admin";
+    Layout = "_LayoutAdmin";
+}
+
+<div class="text-center">
+    <h1 class="text-decoration-underline mt-2 mb-4 p-2">Espace administrateur</h1>
+</div>
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="article col-2 border border-2 border-dark m-2 rounded-3 shadow-lg" asp-area="" asp-controller="Links" asp-action="Index">
+            <div class="p-1">
+                <a class="article text-decoration-none text-black" asp-area="" asp-controller="Links" asp-action="Index">
+                    <h5 class="">Gérer des Ressources</h5>
+                    <p>2 nouvelles propositions de ressource</p>
+                </a>
+                <a class="article adminTextNav" asp-controller="Links" asp-action="Index" asp-route-status="Proposé">- Resources proposées</a><br />
+                <a class="article adminTextNav" asp-controller="Links" asp-action="Create">- Ajouter une ressource</a><br />
+                <a href="#" class="article adminTextNav" data-bs-toggle="modal" data-bs-target="#addFilesModal">- Ajouter une image</a>
+            </div>
+        </div>
+        <a href="#" class="article col-2 text-decoration-none text-black border border-2 border-dark m-2 rounded-3 shadow-lg">
+        <div class="p-1">
+                <h5 class="">Gérer des Users</h5>
+                <p>5 nouvelles demandes d'utilisateur</p>
+                <p>Descriptif</p>
+            </div>
+        </a>
+        <a class="article col-2 text-decoration-none text-black border border-2 border-dark m-2 rounded-3 shadow-lg" asp-area="" asp-controller="Home" asp-action="DiversManage">
+            <div class="p-1">
+                <h5 class="">Gérer les categories</h5>
+                <p>Descriptif</p>
+            </div>
+        </a>
+    </div>
+</div>
+<partial name="_AddFilesModal" />
+<script src="~/js/ManageModal.js" asp-append-version="true"></script>

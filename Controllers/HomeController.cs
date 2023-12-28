@@ -4,6 +4,7 @@ using App_FDark.Services.abstractServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using System.Diagnostics;
 using System.Net.Mime;
 using ContentType = App_FDark.Models.ContentType;
@@ -114,6 +115,24 @@ namespace App_FDark.Controllers
             ViewBag.ContentSelected = contentSelected;
             ViewBag.CategoriesList = new List<Extension>(_context.Extension.ToList());
             return View(vm);
+        }
+
+        public IActionResult HomeAdmin()
+        {
+            return View();
+        }
+        public async Task<IActionResult> GetImagesList()
+        {
+            List<string> vm = new List<string>();
+            string path = Path.Combine("wwwroot", "img");
+            if (Directory.Exists(path))
+            {
+                foreach(string item in Directory.GetFiles(path))
+                { 
+                    vm.Add(item.Substring(8));
+                }
+            }  
+            return View("_ImagesListing",vm);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
