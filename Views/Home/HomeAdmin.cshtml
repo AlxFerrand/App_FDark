@@ -8,9 +8,9 @@
 </div>
 <div class="container-fluid">
     <div class="row justify-content-center">
-        <div class="article col-2 border border-2 border-dark m-2 rounded-3 shadow-lg" asp-area="" asp-controller="Links" asp-action="Index">
+        <div class="article col-2 border border-2 border-dark m-2 rounded-3 shadow-lg">
             <div class="p-1">
-                <a class="article text-decoration-none text-black" asp-area="" asp-controller="Links" asp-action="Index">
+                <a class="article text-decoration-none text-black" asp-controller="Links" asp-action="Index">
                     <h5 class="">Gérer des Ressources</h5>
                     <p>2 nouvelles propositions de ressource</p>
                 </a>
@@ -19,13 +19,14 @@
                 <a href="#" class="article adminTextNav" data-bs-toggle="modal" data-bs-target="#addFilesModal">- Ajouter une image</a>
             </div>
         </div>
-        <a href="#" class="article col-2 text-decoration-none text-black border border-2 border-dark m-2 rounded-3 shadow-lg">
-        <div class="p-1">
-                <h5 class="">Gérer des Users</h5>
-                <p>5 nouvelles demandes d'utilisateur</p>
-                <p>Descriptif</p>
+        <div class="article col-2 border border-2 border-dark m-2 rounded-3 shadow-lg">
+            <div class="p-1">
+                <a class="article text-decoration-none text-black" asp-controller="Account" asp-action="Index">
+                    <h5 class="">Gérer des Users</h5>
+                    <p>5 nouvelles demandes d'utilisateur</p>
+                </a>
             </div>
-        </a>
+        </div>
         <a class="article col-2 text-decoration-none text-black border border-2 border-dark m-2 rounded-3 shadow-lg" asp-area="" asp-controller="Home" asp-action="DiversManage">
             <div class="p-1">
                 <h5 class="">Gérer les categories</h5>

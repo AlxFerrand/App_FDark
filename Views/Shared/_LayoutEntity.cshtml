@@ -37,48 +37,8 @@
                             <li class="nav-item">
                                 <a class="nav-link text-white fw-bold fs-5" asp-area="" asp-controller="Home" asp-action="Index">Home |</a>
                             </li>
-                            @foreach (Extension extension in ViewBag.CategoriesList)
-                            {
-                                if (extension.Type.Equals("ext"))
-                                {
-                                    if (ViewBag.ActualCatId == extension.Id)
-                                    {
-                                        <li class="nav-item">
-                                            <a class="nav-link text-white text-decoration-underline fw-bold fs-5" asp-area="" asp-controller="Home" asp-route-extId="@extension.Id" asp-action="ContentCatalog">@extension.Name</a>
-                                        </li>
-                                    }
-                                    else
-                                    {
-                                        <li class="nav-item">
-                                            <a class="nav-link text-white fw-bold fs-5" asp-area="" asp-controller="Home" asp-route-extId="@extension.Id" asp-action="ContentCatalog">@extension.Name</a>
-                                        </li>
-                                    }
-                                }
-                            }
                         </ul>
-                    </div>
-                        <div class="col container-fluid justify-content-end align-items-end">
-                            <ul class="navbar-nav text-nowrap flex-grow-1 justify-content-end">
-                                @foreach (Extension extension in ViewBag.CategoriesList)
-                                {
-                                    if (extension.Id >= 6)
-                                    {
-                                        if (ViewBag.ActualCatId == extension.Id)
-                                        {
-                                            <li class="nav-item">
-                                                <a class="nav-link text-white text-decoration-underline fw-bold fs-5" asp-area="" asp-controller="Home" asp-route-extId="@extension.Id" asp-action="ContentCatalog">@extension.Name</a>
-                                            </li>
-                                        }
-                                        else
-                                        {
-                                            <li class="nav-item">
-                                                <a class="nav-link text-white fw-bold fs-5" asp-area="" asp-controller="Home" asp-route-extId="@extension.Id" asp-action="ContentCatalog">@extension.Name</a>
-                                            </li>
-                                        }
-                                    }
-                                }
-                            </ul>
-                    </div>
+                    </div> 
                 </div>
             </div>
         </div>
@@ -100,3 +60,4 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
