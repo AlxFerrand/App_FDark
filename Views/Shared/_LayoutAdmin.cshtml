@@ -42,13 +42,19 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-white fw-bold fs-6" asp-area="" asp-controller="Links" asp-action="Index">Gestion ressources
-                                    <sup class="bg-light rounded-circle text-black p-1"> 2</sup>
+                                        @if (ViewBag.NewsCount[0] > 0)
+                                        {
+                                            <sup class="bg-light rounded-circle text-black p-1"> @ViewBag.NewsCount[0]</sup>
+                                        }
                                     </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-white fw-bold fs-6" asp-area="" asp-controller="" asp-action="">Gestion utilisateurs
-                                    <sup class="bg-light rounded-circle text-black p-1"> 5</sup>
-                                </a>
+                                <a class="nav-link text-white fw-bold fs-6" asp-area="" asp-controller="Account" asp-action="Index">Gestion utilisateurs
+                                        @if (ViewBag.NewsCount[1] > 0)
+                                        {
+                                            <sup class="bg-light rounded-circle text-black p-1"> @ViewBag.NewsCount[1]</sup>
+                                        }
+                                    </a>
 
                             </li>
                             <li class="nav-item">

@@ -60,22 +60,3 @@ function PreEditPass(id, name, charactere) {
     document.getElementById("PassUserId").value = id
     $("#PassModal").modal("show");
 }
-
-function EditPass() {
-    var id = document.getElementById("PassUserId").value
-    var newPass = document.getElementById("newPassUser").value
-    let xhrEdit = new XMLHttpRequest
-    xhrEdit.open("POST", "/Account/EditPass?id=" + id + "&newPass=" + newPass)
-    xhrEdit.send(id, newPass)
-    xhrEdit.onload = () => {
-        if (xhrEdit.readyState == 4 && xhrEdit.status == 200) {
-            if (xhrEdit.response === "ok") {
-                window.location.href = '/Account/Index'
-            } else {
-                alert("Error : " + xhrEdit.response)
-            }
-        } else {
-            alert("Error: ")
-        }
-    }
-}

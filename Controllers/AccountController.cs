@@ -1,5 +1,6 @@
 ﻿using App_FDark.Data;
 using App_FDark.Models;
+using App_FDark.Services.abstractServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -12,12 +13,14 @@ namespace App_FDark.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _context;
+        private readonly IResourcesServices _resourcesService;
 
-        public AccountController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, ApplicationDbContext applicationDb)
+        public AccountController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, ApplicationDbContext applicationDb, IResourcesServices resourcesServices)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _context = applicationDb;
+            _resourcesService = resourcesServices;
         }
 
         [HttpGet]
@@ -82,6 +85,7 @@ namespace App_FDark.Controllers
         [HttpGet]
         public IActionResult Index()
         {
+            ViewData["NewsCount"] = _resourcesService.NewsCounter();
             var vm = _context.Users.ToList();
             return View(vm);
         }
@@ -104,22 +108,27 @@ namespace App_FDark.Controllers
         }
 
         [HttpPost]
-        public string ConfirmeUser(string id)
+        public async Task<IActionResult> ConfirmeUser(string id)
         {
+            ErrorViewModel error = new ErrorViewModel();
             var user = _context.Users.Find(id);
             if (user != null)
             {
                 try
                 {
-                    _context.Update(user);
-                    _context.SaveChanges();
-                    return "ok";
+                    var userToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    await _userManager.ConfirmEmailAsync(user, userToken);
+                    await _userManager.AddToRoleAsync(user, "user");
+                    var vm = _context.Users.ToList();
+                    ViewData["NewsCount"] = _resourcesService.NewsCounter();
+                    return View("index", vm);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!UserExists(user.Id))
                     {
-                        return "Not Find";
+                        error.RequestId = "Confirmation d'utilisateur";
+                        error.MessageError = "Utilisateur inconnu";
                     }
                     else
                     {
@@ -127,7 +136,9 @@ namespace App_FDark.Controllers
                     }
                 }
             }
-            return "Utilisateur inconnu";
+            error.RequestId = "Confirmation d'utilisateur";
+            error.MessageError = "Utilisateur inconnu";
+            return View("Error", error);
         }
 
         [HttpPost]
@@ -149,6 +160,7 @@ namespace App_FDark.Controllers
                     var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
                     var result = await _userManager.ResetPasswordAsync(user, resetToken, newPass);
                     var vm = _context.Users.ToList();
+                    ViewData["NewsCount"] = _resourcesService.NewsCounter();
                     return View("index",vm);
                 }
                 catch (DbUpdateConcurrencyException)
@@ -167,7 +179,6 @@ namespace App_FDark.Controllers
             error.MessageError = "User inconnu";
             return View("Error",error);
         }
-
         private bool UserExists(string id)
         {
             return (_context.Users?.Any(e => e.Id.Equals(id))).GetValueOrDefault();

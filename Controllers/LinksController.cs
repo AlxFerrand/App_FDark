@@ -86,6 +86,7 @@ namespace App_FDark.Controllers
             ViewData["dataTypeSelected"] = dataType;
             ViewData["extSelected"] = extId;
             ViewData["order"] = String.IsNullOrEmpty(sortOrder) ? "id" : sortOrder;
+            ViewData["NewsCount"] = _resourcesServices.NewsCounter();
             return View(vm);
         }
 
@@ -113,6 +114,7 @@ namespace App_FDark.Controllers
             ViewData["contentId"] = 0;
             ViewData["ExtensionList"] = new SelectList(_context.Extension.ToList(), "Id", "Name");
             ViewData["dataTypeList"] = new SelectList(DataTypeDictionary.dataTypeDictionary.Values);
+            ViewData["NewsCount"] = _resourcesServices.NewsCounter();
             return View();
         }
 
@@ -159,6 +161,7 @@ namespace App_FDark.Controllers
             ViewData["contentId"] = newLink.ContentId;
             ViewData["ExtensionList"] = new SelectList(_context.Extension.ToList(), "Id", "Name",extId);
             ViewData["dataTypeList"] = new SelectList(DataTypeDictionary.dataTypeDictionary.Values,link.DataType);
+            ViewData["NewsCount"] = _resourcesServices.NewsCounter();
             return View(link);
         }
 
@@ -180,6 +183,7 @@ namespace App_FDark.Controllers
             ViewData["ExtensionList"] = new SelectList(_context.Extension.ToList(), "Id", "Name",extId);
             ViewData["StatusList"] = new SelectList(statusList, "Key", "Value",links.Status);
             ViewBag.Redirect = false;
+            ViewData["NewsCount"] = _resourcesServices.NewsCounter();
             return View(links);
         }
 
@@ -228,6 +232,7 @@ namespace App_FDark.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewBag.Redirect = false;
+            ViewData["NewsCount"] = _resourcesServices.NewsCounter();
             return View(link);
         }
 
@@ -245,7 +250,7 @@ namespace App_FDark.Controllers
             {
                 return NotFound();
             }
-
+            ViewData["NewsCount"] = _resourcesServices.NewsCounter();
             return View(links);
         }
 

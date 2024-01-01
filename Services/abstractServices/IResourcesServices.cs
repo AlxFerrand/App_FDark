@@ -16,5 +16,6 @@ namespace App_FDark.Services.abstractServices
         public Object MakeSnapResource(int id, string DataType, string Label, string Url, string Description, string pictures);
         public Links EditResource(Links link, List<IFormFile> files, string oldPicture);
         public void DeleteFileResource(int id);
+        public int[] NewsCounter();
     }
 }

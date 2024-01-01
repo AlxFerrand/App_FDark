@@ -345,5 +345,12 @@ namespace App_FDark.Services.concretServices
             }
         }
 
+        public int[] NewsCounter()
+        {
+            int[] newsCounter = new int[2];
+            newsCounter[0] = _context.Links.Where(l=>l.Status==1).ToList().Count();
+            newsCounter[1] = _context.Users.Where(u => u.EmailConfirmed == false).ToList().Count();
+            return newsCounter;
+        }
     }
 }

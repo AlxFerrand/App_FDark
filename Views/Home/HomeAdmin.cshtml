@@ -12,7 +12,13 @@
             <div class="p-1">
                 <a class="article text-decoration-none text-black" asp-controller="Links" asp-action="Index">
                     <h5 class="">Gérer des Ressources</h5>
-                    <p>2 nouvelles propositions de ressource</p>
+                    @if (ViewBag.NewsCount[0] > 0)
+                    {
+                        <p>@ViewBag.NewsCount[0] nouvelles propositions de ressource</p>
+                    }else{
+                        <p>Pas de nouvelles propositions de ressource</p>
+                    }
+                    
                 </a>
                 <a class="article adminTextNav" asp-controller="Links" asp-action="Index" asp-route-status="Proposé">- Resources proposées</a><br />
                 <a class="article adminTextNav" asp-controller="Links" asp-action="Create">- Ajouter une ressource</a><br />
@@ -23,8 +29,15 @@
             <div class="p-1">
                 <a class="article text-decoration-none text-black" asp-controller="Account" asp-action="Index">
                     <h5 class="">Gérer des Users</h5>
-                    <p>5 nouvelles demandes d'utilisateur</p>
+                    @if (ViewBag.NewsCount[1] > 0)
+                    {
+                        <p>@ViewBag.NewsCount[1]  nouvelles demandes d'utilisateur</p>
+                    }else{
+                        <p>Pas de nouveaux utilisateur</p>
+                    }
+                    
                 </a>
+                <a class="article adminTextNav" asp-controller="Role" asp-action="Index">- Gestion des Rôles</a>
             </div>
         </div>
         <a class="article col-2 text-decoration-none text-black border border-2 border-dark m-2 rounded-3 shadow-lg" asp-area="" asp-controller="Home" asp-action="DiversManage">

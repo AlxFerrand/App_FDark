@@ -4,6 +4,7 @@
     Layout = "_LayoutAdmin";
 }
 <h1>Gestion des Utilisateurs</h1>
+<a class="btn btn-primary" asp-controller="Role" asp-action="Index" >Gestion des roles</a>
 <div class="row p-2">
 @if (Model.Where(u => u.EmailConfirmed == false).ToList().Count > 0)
 {
@@ -112,15 +113,17 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="confirmModalTitle">Etes vous sûr de vouloir valider cet utilisateur ?</h5>
             </div>
+            <form asp-controller="Account" asp-action="ConfirmeUser" method="post">
             <div id="modalContent" class="modal-body">
-                <input id="confirmeUserId" hidden />
+                <input name="id" id="confirmeUserId" hidden />
                 <p id="confirmeUserName">Utilisateur : </p>
                 <p id="confirmeUserCharactere">Nom du personnage : </p>
             </div>
             <div class="row modal-footer justify-content-center align-items-center">
-                <button type="button" onclick="ConfirmUser()" data-bs-dismiss="modal" class="col-3 btn btn-success">Confirmer</button>
+                <button type="submit" data-bs-dismiss="modal" class="col-3 btn btn-success">Confirmer</button>
                 <button type="button" class="col-2 btn btn-primary" data-bs-dismiss="modal">Close</button>
             </div>
+            </form>
         </div>
     </div>
 </div>

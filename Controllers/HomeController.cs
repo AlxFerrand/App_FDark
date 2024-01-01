@@ -119,6 +119,7 @@ namespace App_FDark.Controllers
 
         public IActionResult HomeAdmin()
         {
+            ViewData["NewsCount"] = _resourcesServices.NewsCounter();
             return View();
         }
         public async Task<IActionResult> GetImagesList()
