@@ -6,6 +6,7 @@
         {
             { 0, "NonDéfinis"},
             { 1, "Proposé"},
+            { 2, "Signalé"},
             { 3, "Accepté"},
             { 4, "Archivé"}
         };

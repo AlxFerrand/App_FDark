@@ -11,6 +11,8 @@ using System.Security.Policy;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Diagnostics.Eventing.Reader;
 using System.Text.RegularExpressions;
+using System.Net.Mime;
+using Microsoft.AspNetCore.Authorization;
 
 namespace App_FDark.Controllers
 {
@@ -90,27 +92,18 @@ namespace App_FDark.Controllers
             return View(vm);
         }
 
-        // GET: Links/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Links == null)
-            {
-                return NotFound();
-            }
-
-            var links = await _context.Links
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (links == null)
-            {
-                return NotFound();
-            }
-
-            return View(links);
-        }
-
         // GET: Links/Create
-        public IActionResult Create()
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(bool byUser)
         {
+            if(byUser)
+            {
+                ViewBag.CategoriesList = new List<Extension>(_context.Extension.ToList());
+                ViewData["contentId"] = 0;
+                ViewData["ExtensionList"] = new SelectList(_context.Extension.ToList(), "Id", "Name");
+                ViewData["dataTypeList"] = new SelectList(DataTypeDictionary.dataTypeDictionary.Values);
+                return View("CreateByUser");
+            }
             ViewData["contentId"] = 0;
             ViewData["ExtensionList"] = new SelectList(_context.Extension.ToList(), "Id", "Name");
             ViewData["dataTypeList"] = new SelectList(DataTypeDictionary.dataTypeDictionary.Values);
@@ -123,7 +116,7 @@ namespace App_FDark.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Label,Url,Description,ContentId,DataType,Status,Picture")]Links newLink)
+        public async Task<IActionResult> Create([Bind("Id,Label,Url,Description,ContentId,DataType,Status,Picture")]Links newLink,bool byUser)
         {
             //Check parametres
             if (!DataTypeDictionary.dataTypeDictionary.ContainsValue(newLink.DataType))
@@ -149,6 +142,10 @@ namespace App_FDark.Controllers
             {
                 _context.Add(newLink);
                 await _context.SaveChangesAsync();
+                if(byUser)
+                {
+                    return RedirectToAction("LinksCatalog", "Home", new { newLink.ContentId });
+                }
                 return RedirectToAction(nameof(Index));
             }
             int extId = 0;
@@ -162,11 +159,17 @@ namespace App_FDark.Controllers
             ViewData["ExtensionList"] = new SelectList(_context.Extension.ToList(), "Id", "Name",extId);
             ViewData["dataTypeList"] = new SelectList(DataTypeDictionary.dataTypeDictionary.Values,link.DataType);
             ViewData["NewsCount"] = _resourcesServices.NewsCounter();
+            if(byUser)
+            {
+                return View("CreateByUser",link);
+            }
             return View(link);
         }
 
         // GET: Links/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int? id,int redirId)
         {
             if (id == null || _context.Links == null)
             {
@@ -182,7 +185,7 @@ namespace App_FDark.Controllers
             List<KeyValuePair<int, string>> statusList = StatusDictionary.statusDictionary.ToList();
             ViewData["ExtensionList"] = new SelectList(_context.Extension.ToList(), "Id", "Name",extId);
             ViewData["StatusList"] = new SelectList(statusList, "Key", "Value",links.Status);
-            ViewBag.Redirect = false;
+            ViewBag.Redirect = redirId;
             ViewData["NewsCount"] = _resourcesServices.NewsCounter();
             return View(links);
         }
@@ -191,8 +194,9 @@ namespace App_FDark.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int Id, [Bind("Id,Label,Url,Description,ContentId,DataType,Status,Picture")]Links link)
+        public async Task<IActionResult> Edit(int Id, [Bind("Id,Label,Url,Description,ContentId,DataType,Status,Picture")]Links link,int redirId)
         {
             //Check parametres
             try
@@ -229,14 +233,20 @@ namespace App_FDark.Controllers
                         throw;
                     }
                 }
+                if(redirId != 0)
+                {
+                    int contentId = redirId;
+                    return RedirectToAction("LinksCatalog","Home",new { contentId });
+                }
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.Redirect = false;
             ViewData["NewsCount"] = _resourcesServices.NewsCounter();
             return View(link);
         }
 
         // GET: Links/Delete/5
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Links == null)
@@ -256,6 +266,7 @@ namespace App_FDark.Controllers
 
         // POST: Links/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -274,6 +285,7 @@ namespace App_FDark.Controllers
         }
 
         //GET: SnapCard/5
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetSnapCard(int Id,string Label, string Url, string Description,string DataType,string Picture)
         {
             var snapResource = _resourcesServices.MakeSnapResource(Id,DataType, Label, Url, Description, Picture);
@@ -302,6 +314,8 @@ namespace App_FDark.Controllers
             
         }
 
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
         public string AddPictureFiles(string newPictureLabel)
         {
             if (string.IsNullOrEmpty(newPictureLabel))

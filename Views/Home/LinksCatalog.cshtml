@@ -1,4 +1,7 @@
 ﻿@model CatalogViewModel;
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
 <div class="row mt-3">
     <nav class="col-12" aria-label="breadcrumb">
@@ -11,6 +14,7 @@
         </ol>
     </nav>
 </div>
+
 @if (Model.Videos.Count() > 0)
 {
     <h5 class="text-decoration-underline text-secondary">Videos :</h5>
@@ -23,21 +27,45 @@
                     <div class="border-bottom">
                         <div class="row justify-content-between align-items-center ">
                             <div class="col-9 ms-1">
-                                <a href="@v.Url" target="_blank" class="text-truncate text-truncate--2 text-decoration-none text-white"><h4>@v.Label</h4></a>
+                                <a href="@v.Url" target="_blank" class="text-truncate text-truncate--2 text-decoration-none text-white"><h4>@v.Label
+                                            @if (v.Status == 2)
+                                            {
+                                    <sup class="text-secondary fs-6">signalé</sup>
+                                            }
+                                    </h4>
+                                </a>
                             </div>
                             <div class="col">
                                 <div class="d-flex justify-content-end p-2">
-                                    <div class="pb-1">
-                                        <button class="btn options" type="button">
-                                            <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 128 512">
-                                                <style>
-                                                    svg {
-                                                        fill: #424243
-                                                    }</style>
-                                                <path d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z" />
-                                            </svg>
-                                        </button>
-                                    </div>
+                                                @if (SignInManager.IsSignedIn(User))
+                                                {
+                                        <div class="pb-1">
+                                            <div class="dropstart">
+                                                <button class="btn options" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 128 512">
+                                                        <style>
+                                                            svg {
+                                                                fill: #424243
+                                                            }</style>
+                                                        <path d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z" />
+                                                    </svg>
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                                @if (!User.IsInRole("Admin"))
+                                                                {
+                                                        <a class="dropdown-item" href="#">Favoris</a>
+                                                        <a class="dropdown-item" href="Signal?id=@v.Id">Signaler</a>
+                                                                }
+                                                                @if (User.IsInRole("Admin"))
+                                                                {
+                                                        <a class="dropdown-item" href="#">Favoris</a>
+                                                        <a class="dropdown-item" href="../Links/Edit?id=@v.Id&redirId=@ViewBag.ContentSelected.Id">Editer</a>
+                                                        <a class="dropdown-item" href="Archived?id=@v.Id">Archiver</a>
+                                                                }
+                                                </div>
+                                            </div>
+                                        </div>
+                                                }       
                                 </div>
                             </div>
                         </div>
@@ -186,4 +214,3 @@
             }
     </div>
 }
-

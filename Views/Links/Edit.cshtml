@@ -17,6 +17,7 @@
         <div class="col-xl-4">
             <form id="form" asp-action="Edit">       
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" name="redirId" value="@ViewBag.Redirect" />
                 <input type="hidden" asp-for="Id" />
                 <input id="dataType" type="hidden" asp-for="DataType" />
                 <div class="form-group">

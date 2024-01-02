@@ -20,7 +20,8 @@
                     }
                     
                 </a>
-                <a class="article adminTextNav" asp-controller="Links" asp-action="Index" asp-route-status="Proposé">- Resources proposées</a><br />
+                <a class="article adminTextNav" asp-controller="Links" asp-action="Index" asp-route-status="Proposé">- Resources proposées (@ViewBag.NewsCount[0])</a><br />
+                <a class="article adminTextNav" asp-controller="Links" asp-action="Index" asp-route-status="Signalé">- Resources signalées (@ViewBag.NewsCount[2])</a><br />
                 <a class="article adminTextNav" asp-controller="Links" asp-action="Create">- Ajouter une ressource</a><br />
                 <a href="#" class="article adminTextNav" data-bs-toggle="modal" data-bs-target="#addFilesModal">- Ajouter une image</a>
             </div>

@@ -1,6 +1,7 @@
 ﻿using App_FDark.Data;
 using App_FDark.Models;
 using App_FDark.Services.abstractServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -83,6 +84,8 @@ namespace App_FDark.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
         public IActionResult Index()
         {
             ViewData["NewsCount"] = _resourcesService.NewsCounter();
@@ -91,6 +94,8 @@ namespace App_FDark.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
         public string Delete(string id)
         {
             if (_context.Users == null)
@@ -108,6 +113,8 @@ namespace App_FDark.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConfirmeUser(string id)
         {
             ErrorViewModel error = new ErrorViewModel();
@@ -142,6 +149,8 @@ namespace App_FDark.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditPass(string id,string newPass)
         {
             ErrorViewModel error = new ErrorViewModel();
