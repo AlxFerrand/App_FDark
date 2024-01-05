@@ -1,4 +1,4 @@
-﻿@model App_FDark.Models.Links
+﻿@model _LinksCreateViewModel
 
 @{
     ViewData["Title"] = "Submit";
@@ -6,7 +6,7 @@
 }
 <script type="text/javascript">
     var contentSelected;
-    contentSelected = @ViewData["contentId"];
+    contentSelected = @Model.ContentID;
 </script>
 
 <h1 class="text-center">Creation d'une Resource</h1>
@@ -19,47 +19,47 @@
             <input type="hidden" name="byUser" value="True" />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="col-2">
-                <label for="dataType" class="form-label">Data Type</label>
-                <select id="dataType" class="form-control" name="dataType" asp-items="ViewBag.dataTypeList" onchange="ShowForm()">
+                <label asp-for="NewLink.DataType" class="form-label">Data Type</label>
+                <select id="dataType" class="form-control" asp-for="NewLink.DataType" asp-items="Model.DataTypeList" onchange="ShowForm()">
                     <option value="">Null</option>
                 </select>
-                <span asp-validation-for="DataType" class="text-danger"></span>
+                <span asp-validation-for="NewLink.DataType" class="text-danger"></span>
             </div>
             <div id="label" class="form-group hidden">
-                <label asp-for="Label" class="control-label">Label</label>
-                <input asp-for="Label" class="form-control" />
-                <span asp-validation-for="Label" class="text-danger"></span>
+                <label asp-for="NewLink.Label" class="control-label">Label</label>
+                <input asp-for="NewLink.Label" class="form-control" />
+                <span asp-validation-for="NewLink.Label" class="text-danger"></span>
             </div>
             <div id="picture" class="form-group hidden">
-                <label asp-for="Picture" class="control-label">Image(s)</label>
-                <input id="imagesInput" asp-for="Picture" class="form-control" readonly />
+                <label asp-for="NewLink.Picture" class="control-label">Image(s)</label>
+                <input id="imagesInput" asp-for="NewLink.Picture" class="form-control" readonly />
                 <span>
                     <button type="button" onclick="loadFiles()" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#fileModal">
                         Files
                     </button>
                 </span>
-                <span asp-validation-for="Picture" class="text-danger"></span>
+                <span asp-validation-for="NewLink.Picture" class="text-danger"></span>
             </div>
             <div id="url" class="form-group hidden">
-                <label asp-for="Url" class="control-label">Url</label>
-                <input asp-for="Url" class="form-control" value="url" />
-                <span asp-validation-for="Url" class="text-danger"></span>
+                <label asp-for="NewLink.Url" class="control-label">Url</label>
+                <input asp-for="NewLink.Url" class="form-control" value="url" />
+                <span asp-validation-for="NewLink.Url" class="text-danger"></span>
             </div>
             <div id="description" class="form-group hidden">
-                <label asp-for="Description" class="control-label">Description</label>
-                <textarea rows="5" asp-for="Description" class="form-control"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
+                <label asp-for="NewLink.Description" class="control-label">Description</label>
+                <textarea rows="5" asp-for="NewLink.Description" class="form-control"></textarea>
+                <span asp-validation-for="NewLink.Description" class="text-danger"></span>
             </div>
             <div id="extension" class="form-group hidden">
                 <label for="extId" class="form-label">Categorie</label>
-                <select id="categorySelect" class="form-control" asp-items="ViewBag.ExtensionList" onchange="GetContentList()">
+                <select id="categorySelect" class="form-control" asp-items="Model.ExtensionList" onchange="GetContentList()">
                     <option value="0">All</option>
                 </select>
-                <span asp-validation-for="ContentId" class="text-danger"></span>
+                <span asp-validation-for="NewLink.ContentId" class="text-danger"></span>
             </div>
             <div id="contentSelectDiv" class="form-group hidden">
-                <label for="contentId" class="form-label">Contenu</label>
-                <select id="contentSelect" class="form-control" name="contentId">
+                <label asp-for="NewLink.ContentId" class="form-label">Contenu</label>
+                <select id="contentSelect" class="form-control" asp-for="NewLink.ContentId">
                     <option value="0">All</option>
                 </select>
             </div>

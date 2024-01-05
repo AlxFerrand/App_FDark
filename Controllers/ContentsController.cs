@@ -8,22 +8,26 @@ using Microsoft.EntityFrameworkCore;
 using App_FDark.Data;
 using App_FDark.Models;
 using Microsoft.AspNetCore.Authorization;
+using App_FDark.Services.abstractServices;
+using App_FDark.Services.concretServices;
 
 namespace App_FDark.Controllers
 {
     public class ContentsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IResourcesServices _resourcesService;
 
-        public ContentsController(ApplicationDbContext context)
+        public ContentsController(ApplicationDbContext context, IResourcesServices resourcesServices)
         {
             _context = context;
+            _resourcesService = resourcesServices;
         }
 
         // GET: Contents
         public async Task<IActionResult> Index()
         {
-              return _context.Content != null ? 
+            return _context.Content != null ? 
                           View(await _context.Content.ToListAsync()) :
                           Problem("Entity set 'ApplicationDbContext.Content'  is null.");
         }

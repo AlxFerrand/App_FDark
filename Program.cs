@@ -20,7 +20,13 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages()
     .AddRazorRuntimeCompilation();
 builder.Services.AddScoped<IResourcesServices, ResourcesServices>();
+builder.Services.AddScoped<ILayoutServices, LayoutServices>();
 builder.Services.AddScoped<ISaveFilesService, SaveFilesService>();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+});
 
 var app = builder.Build();
 
@@ -43,6 +49,8 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseStatusCodePagesWithRedirects("/Home/Index");
 
 app.MapControllerRoute(
     name: "default",

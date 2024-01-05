@@ -22,10 +22,8 @@ namespace App_FDark.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [ValidateAntiForgeryToken]
         public ViewResult Index()
         {
-            ViewData["NewsCount"] = _resourcesService.NewsCounter();
             return View(roleManager.Roles);
         }
 
@@ -34,16 +32,14 @@ namespace App_FDark.Controllers
             foreach (IdentityError error in result.Errors)
                 ModelState.AddModelError("", error.Description);
         }
+
         [Authorize(Roles = "Admin")]
-        [ValidateAntiForgeryToken]
         public IActionResult Create()
         {
-            ViewData["NewsCount"] = _resourcesService.NewsCounter();
             return View();
         }
 
         [Authorize(Roles = "Admin")]
-        [ValidateAntiForgeryToken]
         [HttpPost]
         public async Task<IActionResult> Create([Required] string name)
         {
@@ -55,11 +51,9 @@ namespace App_FDark.Controllers
                 else
                     Errors(result);
             }
-            ViewData["NewsCount"] = _resourcesService.NewsCounter();
             return View(name);
         }
         [Authorize(Roles = "Admin")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(string id)
         {
             IdentityRole role = await roleManager.FindByIdAsync(id);
@@ -70,7 +64,6 @@ namespace App_FDark.Controllers
                 var list = await userManager.IsInRoleAsync(user, role.Name) ? members : nonMembers;
                 list.Add(user);
             }
-            ViewData["NewsCount"] = _resourcesService.NewsCounter();
             return View(new RoleEdit
             {
                 Role = role,
@@ -80,7 +73,6 @@ namespace App_FDark.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [ValidateAntiForgeryToken]
         [HttpPost]
         public async Task<IActionResult> Update(RoleModification model)
         {

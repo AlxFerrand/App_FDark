@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using App_FDark.Services.abstractServices;
+@inject ILayoutServices LayoutServices
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="utf-8" />
@@ -42,18 +44,18 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-white fw-bold fs-6" asp-area="" asp-controller="Links" asp-action="Index">Gestion ressources
-                                        @if (ViewBag.NewsCount[0] + ViewBag.NewsCount[2] > 0)
+                                        @if (LayoutServices.NewsCounter()[0] + LayoutServices.NewsCounter()[2] > 0)
                                         {
-                                            var newsResources = ViewBag.NewsCount[0] + ViewBag.NewsCount[2];
+                                            var newsResources = LayoutServices.NewsCounter()[0] + LayoutServices.NewsCounter()[2];
                                             <sup class="bg-light rounded-circle text-black p-1">@newsResources</sup>
                                         }
                                     </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-white fw-bold fs-6" asp-area="" asp-controller="Account" asp-action="Index">Gestion utilisateurs
-                                        @if (ViewBag.NewsCount[1] > 0)
+                                        @if (LayoutServices.NewsCounter()[1] > 0)
                                         {
-                                            <sup class="bg-light rounded-circle text-black p-1"> @ViewBag.NewsCount[1]</sup>
+                                            <sup class="bg-light rounded-circle text-black p-1"> @LayoutServices.NewsCounter()[1]</sup>
                                         }
                                     </a>
 

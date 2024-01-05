@@ -1,4 +1,4 @@
-﻿@model CatalogViewModel;
+﻿@model _LinksCatalogViewModel;
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
@@ -6,10 +6,10 @@
 <div class="row mt-3">
     <nav class="col-12" aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-route-extId="@ViewBag.ContentExtension.Id" asp-route-contentTypeId="0" asp-action="ContentCatalog">@ViewBag.ContentExtension.Name</a></li>
-            <li class="breadcrumb-item"><a <a asp-area="" asp-controller="Home" asp-route-extId="@ViewBag.ContentExtension.Id" asp-route-contentTypeId="@ViewBag.ContentTypeSelected.Id" asp-action="ContentCatalog">@ViewBag.ContentTypeSelected.Name</a></li>
+            <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-route-extId="@Model.ContentExtension.Id" asp-route-contentTypeId="0" asp-action="ContentCatalog">@Model.ContentExtension.Name</a></li>
+            <li class="breadcrumb-item"><a <a asp-area="" asp-controller="Home" asp-route-extId="@Model.ContentExtension.Id" asp-route-contentTypeId="@Model.ContentTypeSelected.Id" asp-action="ContentCatalog">@Model.ContentTypeSelected.Name</a></li>
             <li class="breadcrumb-item active" aria-current="page" ">
-                @ViewBag.ContentSelected.Name
+                @Model.ContentSelected.Name
             </li>
         </ol>
     </nav>
@@ -59,7 +59,7 @@
                                                                 @if (User.IsInRole("Admin"))
                                                                 {
                                                         <a class="dropdown-item" href="#">Favoris</a>
-                                                        <a class="dropdown-item" href="../Links/Edit?id=@v.Id&redirId=@ViewBag.ContentSelected.Id">Editer</a>
+                                                        <a class="dropdown-item" href="../Links/Edit?id=@v.Id&redirId=@Model.ContentSelected.Id">Editer</a>
                                                         <a class="dropdown-item" href="Archived?id=@v.Id">Archiver</a>
                                                                 }
                                                 </div>
@@ -143,13 +143,13 @@
     <div class="row row-cols-1 row-cols-md-1 row-cols-lg-2 row-cols-xl-3 row-cols-xxl-4">
             @foreach (var i in Model.Images)
             {
-            <article class="col p-2">
+            <article onclick="ShowPicture('@i.Id')" class="article col p-2">
                 <!-- Déclaration du composant -->
                 <div class="card bg-dark shadow">
                     <div class="border-bottom">
                         <div class="row justify-content-between align-items-center ">
                             <div class="col-9 ms-1">
-                                <a href="#" target="_blank" class="text-truncate text-truncate--2 text-decoration-none text-white"><h4>@i.Label</h4></a>
+                                <h4 class="text-truncate text-truncate--2 text-decoration-none text-white">@i.Label @i.Id</h4>
                             </div>
                             <div class="col">
                                 <div class="d-flex justify-content-end p-2">
@@ -173,22 +173,16 @@
                     {
                         <div class="card-img-container row p-2">
                             <div class="col pe-1">
-                                <a href="#" target="_blank">
                                     <img class="image1 rounded-2 ps-1"
                                          src="/img/@i.Pictures[0]" />
-                                </a>
                             </div>
                             <div class="col ps-1 pe-1">
-                                <a href="#" target="_blank">
                                     <img class=" image2 rounded-2"
                                          src="/img/@i.Pictures[1]" />
-                                </a>
                                 @if (i.Pictures.Count() > 2)
                                 {
-                                    <a href="#" target="_blank">
                                         <img class=" image3 rounded-2"
                                                 src="/img/@i.Pictures[2]" />
-                                    </a>
                                 }
                             </div>
                         </div>
@@ -196,10 +190,8 @@
                         @if (i.Pictures.Count() == 1)
                         {
                         <div class="card-img-container p-2">
-                            <a href="#" target="_blank">
                                 <img class="card-image rounded-2"
                                         src="/img/@i.Pictures[0]" />
-                            </a>
                         </div>
                         }
                     <!-- Corps de la carte -->
@@ -214,3 +206,6 @@
             }
     </div>
 }
+<div id="PicturesModal">
+</div>
+

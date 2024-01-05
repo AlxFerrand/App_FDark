@@ -164,3 +164,26 @@ table {
     height: 50vh; 
     overflow: auto; 
 }
+
+.bg-none{
+    background : none;
+    border : none;
+}
+
+.prev-icon,.next-icon {
+    height: 4em;
+    width: 4em;
+}
+
+.carousel-image{
+    max-width:75vw;
+}
+.W-100 {
+    max-width: 100%;
+}
+.btn-larg{
+    background-size:3em;
+}
+.modal-header .btn-close {
+    margin:0;
+}

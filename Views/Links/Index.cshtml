@@ -1,36 +1,37 @@
-﻿@model List<ResourceAdminViewModel>
+﻿@model _LinksIndexViewModel
 
 @{
     ViewData["Title"] = "Index";
     Layout = "_LayoutAdmin";
 }
 <script>
-    var contentSelected = @ViewBag.contentSelected;
+    var contentSelected = @Model.ContentSelected;
 </script>
 <h1>Gestion des resources</h1>
 <div class="row align-items-center">
-    <form method="get" class="row align-items-end mb-3">
+    <form id="form" method="get" class="row align-items-end mb-3">
+        <input id="sortOrder" type="hidden" asp-for="Order" />
         <div class="col-2">
-            <label for="dataType" class="form-label">Data Type</label>
-            <select class="form-control" name="dataType" asp-items="ViewBag.dataTypeList">
+            <label asp-for="DataTypeSelected" class="form-label">Data Type</label>
+            <select class="form-control" asp-for="DataTypeSelected" asp-items="Model.DataTypeList">
                 <option value="">All</option>
             </select>
         </div>
         <div class="col-2">
-            <label for="status" class="form-label">Status</label>
-            <select class="form-control" name="status" asp-items="ViewBag.statusList">
+            <label asp-for="StatusSelected" class="form-label">Status</label>
+            <select class="form-control" asp-for="StatusSelected" asp-items="Model.StatusList">
                 <option value="">All</option>
             </select>
         </div>
         <div class="col-2">
-            <label for="extId" class="form-label">Categorie</label>
-            <select id="categorySelect" class="form-control" asp-items="ViewBag.ExtensionList" name="extId" onchange="GetContentList()">
+            <label asp-for="ExtSelected" class="form-label">Categorie</label>
+            <select id="categorySelect" class="form-control" asp-items="Model.ExtensionList" asp-for="ExtSelected" onchange="GetContentList()">
                 <option value="0">All</option>
             </select>
         </div>
         <div id="contentSelectDiv" class="col-2">
-            <label for="contentId" class="form-label">Contenu</label>
-            <select id="contentSelect" class="form-control" name="contentId">
+            <label asp-for="ContentSelected" class="form-label">Contenu</label>
+            <select id="contentSelect" class="form-control" asp-for="ContentSelected">
                 <option value="0">All</option>
             </select>
         </div>
@@ -43,59 +44,39 @@
 <p>
     <a class="btn btn-success" asp-action="Create">Ajouter +</a>
 </p>
-@if (Model.Count > 0)
+@if (Model.Resources.Count > 0)
 {
     <table class="table table-striped table-sm">
         <thead>
             <tr class="text-white" style="background-color : rgba(80, 45, 97,1)">
                 <th class="nav-item text-center">
-                    @if (ViewData["order"].Equals("dataType"))
+                    @if (Model.Order.Equals("dataType"))
                     {
-                        <a class="text-decoration-none text-white "
-                           asp-action="Index"
-                           asp-route-dataType="@ViewBag.dataTypeSelected"
-                           asp-route-status="@ViewBag.statusSelected"
-                           asp-route-extId="@ViewBag.extSelected"
-                           asp-route-contentId="@ViewBag.contentSelected"
-                           asp-route-sortOrder="dataType_desc">
+                        <a class="article text-decoration-none text-white "
+                           onclick="SortLinks('dataType_desc')">
                            DataType ▲
                         </a>
                     }
                     else
                     {
-                        <a class="text-decoration-none text-white"
-                        asp-action="Index"
-                           asp-route-dataType="@ViewBag.dataTypeSelected"
-                           asp-route-status="@ViewBag.statusSelected"
-                           asp-route-extId="@ViewBag.extSelected"
-                           asp-route-contentId="@ViewBag.contentSelected"
-                        asp-route-sortOrder="dataType">
+                        <a class="article text-decoration-none text-white "
+                           onclick="SortLinks('dataType')">
                             DataType ▼
                         </a>
                     }
                 </th>
                 <th class="nav-item text-center">
-                    @if (ViewData["order"].Equals("label"))
+                    @if (Model.Order.Equals("label"))
                     {
-                        <a class="text-decoration-none text-white "
-                        asp-action="Index"
-                           asp-route-dataType="@ViewBag.dataTypeSelected"
-                           asp-route-status="@ViewBag.statusSelected"
-                           asp-route-extId="@ViewBag.extSelected"
-                           asp-route-contentId="@ViewBag.contentSelected"
-                        asp-route-sortOrder="label_desc">
+                        <a class="article text-decoration-none text-white "
+                           onclick="SortLinks('label_desc')">
                             Label ▲
                         </a>
                     }
                     else
                     {
-                        <a class="text-decoration-none text-white"
-                        asp-action="Index"
-                           asp-route-dataType="@ViewBag.dataTypeSelected"
-                           asp-route-status="@ViewBag.statusSelected"
-                           asp-route-extId="@ViewBag.extSelected"
-                           asp-route-contentId="@ViewBag.contentSelected"
-                        asp-route-sortOrder="label">
+                        <a class="article text-decoration-none text-white "
+                           onclick="SortLinks('label')">
                             Label ▼
                         </a>
                     }
@@ -110,53 +91,33 @@
                     Description
                 </th>
                 <th class="nav-item text-center">
-                    @if (ViewData["order"].Equals("content"))
+                    @if (Model.Order.Equals("content"))
                     {
-                        <a class="text-decoration-none text-white "
-                        asp-action="Index"
-                           asp-route-dataType="@ViewBag.dataTypeSelected"
-                           asp-route-status="@ViewBag.statusSelected"
-                           asp-route-extId="@ViewBag.extSelected"
-                           asp-route-contentId="@ViewBag.contentSelected"
-                        asp-route-sortOrder="content_desc">
+                        <a class="article text-decoration-none text-white "
+                           onclick="SortLinks('content_desc')">
                             Contenu ▲
                         </a>
                     }
                     else
                     {
-                        <a class="text-decoration-none text-white"
-                        asp-action="Index"
-                           asp-route-dataType="@ViewBag.dataTypeSelected"
-                           asp-route-status="@ViewBag.statusSelected"
-                           asp-route-extId="@ViewBag.extSelected"
-                           asp-route-contentId="@ViewBag.contentSelected"
-                        asp-route-sortOrder="content">
+                        <a class="article text-decoration-none text-white "
+                           onclick="SortLinks('content')">
                             Contenu ▼
                         </a>
                     }
                 </th>
                 <th class="nav-item text-center">
-                    @if (ViewData["order"].Equals("status"))
+                    @if (Model.Order.Equals("status"))
                     {
-                        <a class="text-decoration-none text-white "
-                        asp-action="Index"
-                           asp-route-dataType="@ViewBag.dataTypeSelected"
-                           asp-route-status="@ViewBag.statusSelected"
-                           asp-route-extId="@ViewBag.extSelected"
-                           asp-route-contentId="@ViewBag.contentSelected"
-                        asp-route-sortOrder="status_desc">
+                        <a class="article text-decoration-none text-white "
+                           onclick="SortLinks('status_desc')">
                             Status ▲
                         </a>
                     }
                     else
                     {
-                        <a class="text-decoration-none text-white"
-                        asp-action="Index"
-                           asp-route-dataType="@ViewBag.dataTypeSelected"
-                           asp-route-status="@ViewBag.statusSelected"
-                           asp-route-extId="@ViewBag.extSelected"
-                           asp-route-contentId="@ViewBag.contentSelected"
-                        asp-route-sortOrder="status">
+                        <a class="article text-decoration-none text-white "
+                           onclick="SortLinks('status')">
                             Status ▼
                         </a>
                     }
@@ -165,7 +126,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @foreach (var item in Model.Resources)
             {
                 <tr>
                     <td class="">
@@ -202,3 +163,4 @@ else
 {
     <p class="text-center">Aucun élément ne correspond à votre recherche</p>
 }
+<script src="~/js/LinksIndex.js" asp-append-version="true"></script>

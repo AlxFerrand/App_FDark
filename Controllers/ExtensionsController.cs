@@ -7,22 +7,25 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using App_FDark.Data;
 using App_FDark.Models;
+using App_FDark.Services.abstractServices;
 
 namespace App_FDark.Controllers
 {
     public class ExtensionsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IResourcesServices _resourcesService;
 
-        public ExtensionsController(ApplicationDbContext context)
+        public ExtensionsController(ApplicationDbContext context, IResourcesServices resourcesServices)
         {
             _context = context;
+            _resourcesService = resourcesServices;
         }
 
         // GET: Extensions
         public async Task<IActionResult> Index()
         {
-              return _context.Extension != null ? 
+            return _context.Extension != null ? 
                           View(await _context.Extension.ToListAsync()) :
                           Problem("Entity set 'ApplicationDbContext.Categories'  is null.");
         }

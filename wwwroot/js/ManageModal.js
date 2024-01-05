@@ -122,6 +122,8 @@ function showSnap() {
 }
 
 function AddNewFiles() {
+
+    CheckFileSize(document.getElementById("newPictureFile"))
     var formData = new FormData(document.getElementById("addFilesForm"))
     var xhrAddFile = new XMLHttpRequest();
     xhrAddFile.open("POST", "/Links/AddPictureFiles", true)
@@ -130,9 +132,19 @@ function AddNewFiles() {
     xhrAddFile.onload = () => {
         if (xhrAddFile.readyState == 4 && xhrAddFile.status == 200) {
             alert(xhrAddFile.response)
+            $("#addFilesModal").modal("hide")
             loadFiles()
         } else {
             alert("Error: ")
         }
+    }
+}
+
+function CheckFileSize(inputFile) {
+    var maxSize = 1024*1024
+    var fileSize = inputFile.files[0].size
+    if (fileSize > maxSize) {
+        alert("Fichier trop volumineux, taille max : 1Mo")
+        inputFile.value =""
     }
 }

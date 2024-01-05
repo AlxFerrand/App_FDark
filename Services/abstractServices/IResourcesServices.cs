@@ -6,7 +6,7 @@ namespace App_FDark.Services.abstractServices
 {
     public interface IResourcesServices
     {
-        public CatalogViewModel CreateCatalogViewModel(List<Links> linksList);
+        public _LinksCatalogViewModel CreateCatalogViewModel(List<Links> linksList);
         public List<ResourceVideo> CreateVideoList(List<Links> linksList);
         public List<ResourceSite> CreateSiteList(List<Links> linksList);
         public List<ResourceImage> CreateImageList(List<Links> linksList);

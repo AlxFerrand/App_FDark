@@ -7,22 +7,25 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using App_FDark.Data;
 using App_FDark.Models;
+using App_FDark.Services.abstractServices;
 
 namespace App_FDark.Controllers
 {
     public class ContentTypesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IResourcesServices _resourcesService;
 
-        public ContentTypesController(ApplicationDbContext context)
+        public ContentTypesController(ApplicationDbContext context, IResourcesServices resourcesServices)
         {
             _context = context;
+            _resourcesService = resourcesServices;
         }
 
         // GET: ContentTypes
         public async Task<IActionResult> Index()
         {
-              return _context.Types != null ? 
+            return _context.Types != null ? 
                           View(await _context.Types.ToListAsync()) :
                           Problem("Entity set 'ApplicationDbContext.Types'  is null.");
         }

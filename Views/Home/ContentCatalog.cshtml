@@ -1,4 +1,4 @@
-﻿@model List<Content>;
+﻿@model _ContentCatalogViewModel
 @{
     ViewData["Title"] = ViewData["CategorySelect"];
 }
@@ -6,28 +6,28 @@
     <div class="container-fluid">
         <div class="justify-content-between">
             <ul class="navbar-nav flex-grow-1">
-                @if(ViewBag.ContentTypeSelect == 0)
+                @if(Model.ContentTypeSelected == 0)
                 {
                     <li class="nav-item">
-                        <a class="nav-link text-dark text-decoration-underline fw-bold" asp-area="" asp-controller="Home" asp-route-extId="@ViewBag.ActualCatId" asp-route-contentTypeId="0" asp-action="ContentCatalog">All</a>
+                        <a class="nav-link text-dark text-decoration-underline fw-bold" asp-area="" asp-controller="Home" asp-route-extId="@Model.ActualCatId" asp-route-contentTypeId="0" asp-action="ContentCatalog">All</a>
                     </li>
                 }else{
                     <li class="nav-item">
-                        <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Home" asp-route-extId="@ViewBag.ActualCatId" asp-route-contentTypeId="0" asp-action="ContentCatalog">All</a>
+                        <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Home" asp-route-extId="@Model.ActualCatId" asp-route-contentTypeId="0" asp-action="ContentCatalog">All</a>
                     </li>
                 }
-                @foreach (ContentType contentType in ViewBag.ContentTypeList)
+                @foreach (ContentType contentType in Model.ContentTypesList)
                 {
-                    if (ViewBag.ContentTypeSelect == contentType.Id)
+                    if (Model.ContentTypeSelected == contentType.Id)
                     {
                         <li class="nav-item">
-                            <a class="nav-link text-dark text-decoration-underline fw-bold" asp-area="" asp-controller="Home" asp-route-extId="@ViewBag.ActualCatId" asp-route-contentTypeId="@contentType.Id" asp-action="ContentCatalog">@contentType.Name</a>
+                            <a class="nav-link text-dark text-decoration-underline fw-bold" asp-area="" asp-controller="Home" asp-route-extId="@Model.ActualCatId" asp-route-contentTypeId="@contentType.Id" asp-action="ContentCatalog">@contentType.Name</a>
                         </li>
                     }
                     else
                     {
                         <li class="nav-item">
-                            <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Home" asp-route-extId="@ViewBag.ActualCatId" asp-route-contentTypeId="@contentType.Id" asp-action="ContentCatalog">@contentType.Name</a>
+                            <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Home" asp-route-extId="@Model.ActualCatId" asp-route-contentTypeId="@contentType.Id" asp-action="ContentCatalog">@contentType.Name</a>
                         </li>
                     }
                 }
@@ -36,7 +36,7 @@
     </div>
 </nav>
 <div class="row row-cols-1 row-cols-md-1 row-cols-lg-2 row-cols-xl-3 row-cols-xxl-4">
-    @foreach (var c in Model)
+    @foreach (var c in Model.ContentsList)
     {
         <article class="col p-2">
             <!-- Déclaration du composant -->

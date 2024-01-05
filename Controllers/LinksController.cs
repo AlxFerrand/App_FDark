@@ -6,12 +6,7 @@ using App_FDark.Models;
 using App_FDark.Services.abstractServices;
 using App_FDark.Services.concretServices;
 using System.Text.Json;
-using System.ComponentModel.DataAnnotations;
-using System.Security.Policy;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.Diagnostics.Eventing.Reader;
 using System.Text.RegularExpressions;
-using System.Net.Mime;
 using Microsoft.AspNetCore.Authorization;
 
 namespace App_FDark.Controllers
@@ -30,106 +25,98 @@ namespace App_FDark.Controllers
         }
 
         // GET: Links
-        public async Task<IActionResult> Index(string sortOrder, string dataType, string status, int extId, int contentId)
+        public async Task<IActionResult> Index(string Order, string DataTypeSelected, int StatusSelected, int ExtSelected, int ContentSelected)
         {
             
             //Check parameters
-            if (!String.IsNullOrEmpty(dataType))
+            if (!String.IsNullOrEmpty(DataTypeSelected))
             { 
-                if (!DataTypeDictionary.dataTypeDictionary.ContainsValue(dataType))
+                if (!DataTypeDictionary.dataTypeDictionary.ContainsValue(DataTypeSelected))
                 {
                     return Redirect("Home/index");
                 }
             }
-            int statusInt = 0;
-            if (!String.IsNullOrEmpty(status))
+            if (StatusSelected != 0)
             {
-                if (StatusDictionary.statusDictionary.ContainsValue(status))
-                {
-                    statusInt = StatusDictionary.statusDictionary.Where(kvp=>kvp.Value.Equals(status)).Select(kvp=>kvp.Key).FirstOrDefault();
-                }
-                else
+                if (!StatusDictionary.statusDictionary.ContainsKey(StatusSelected))
                 {
                     return Redirect("Home/index");
                 }
             }
-            if (extId != 0)
+            if (ExtSelected != 0)
             {
                 try
                 {
-                    _context.Extension.Find(extId);
+                    _context.Extension.Find(ExtSelected);
                 }
                 catch (Exception ex)
                 {
                     return Redirect("Home/index");
                 }
             }
-            if (contentId != 0)
+            if (ContentSelected != 0)
             {
                 try
                 {
-                    _context.Content.Find(contentId);
+                    _context.Content.Find(ContentSelected);
                 }
                 catch (Exception ex)
                 {
                     return Redirect("Home/index");
                 }
             }
-
+            //Donnée vue
             //Find Resources
-            List<ResourceAdminViewModel> vm = _resourcesServices.CreateResourceAdminViewModel(sortOrder, dataType, statusInt, extId,contentId);
-
-            //Return
-            ViewData["dataTypeList"] = new SelectList(DataTypeDictionary.dataTypeDictionary.Values,dataType);
-            ViewData["ExtensionList"] = new SelectList(_context.Extension.ToList(),"Id","Name",extId);
-            ViewData["statusList"] = new SelectList(StatusDictionary.statusDictionary.Values,status);
-            ViewData["contentSelected"] = contentId;
-            ViewData["statusSelected"] = status;
-            ViewData["dataTypeSelected"] = dataType;
-            ViewData["extSelected"] = extId;
-            ViewData["order"] = String.IsNullOrEmpty(sortOrder) ? "id" : sortOrder;
-            ViewData["NewsCount"] = _resourcesServices.NewsCounter();
+            _LinksIndexViewModel vm = new _LinksIndexViewModel(StatusSelected, DataTypeSelected, ExtSelected, _context.Extension.ToList(), Order, ContentSelected);
+            vm.Resources = _resourcesServices.CreateResourceAdminViewModel(Order, DataTypeSelected, StatusSelected, ExtSelected, ContentSelected);
+            if (String.IsNullOrEmpty(vm.Order))
+            {
+                vm.Order = "id";
+            }
             return View(vm);
         }
 
         // GET: Links/Create
-        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,User")]
         public IActionResult Create(bool byUser)
         {
-            if(byUser)
+            //Donnée Vue
+            _LinksCreateViewModel vm = new _LinksCreateViewModel(_context.Extension.ToList());
+            if (byUser)
             {
-                ViewBag.CategoriesList = new List<Extension>(_context.Extension.ToList());
-                ViewData["contentId"] = 0;
-                ViewData["ExtensionList"] = new SelectList(_context.Extension.ToList(), "Id", "Name");
-                ViewData["dataTypeList"] = new SelectList(DataTypeDictionary.dataTypeDictionary.Values);
-                return View("CreateByUser");
+                return View("CreateByUser",vm);
             }
-            ViewData["contentId"] = 0;
-            ViewData["ExtensionList"] = new SelectList(_context.Extension.ToList(), "Id", "Name");
-            ViewData["dataTypeList"] = new SelectList(DataTypeDictionary.dataTypeDictionary.Values);
-            ViewData["NewsCount"] = _resourcesServices.NewsCounter();
-            return View();
+            return View(vm);
         }
 
         // POST: Links/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin,User")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Label,Url,Description,ContentId,DataType,Status,Picture")]Links newLink,bool byUser)
         {
             //Check parametres
             if (!DataTypeDictionary.dataTypeDictionary.ContainsValue(newLink.DataType))
             {
-                ModelState.AddModelError("DataType", "Type de ressources incorect");
+                ModelState.AddModelError("NewLink.DataType", "Type de ressources incorect");
             }
-            newLink.Status = 1;
+            if (byUser)
+            {
+                newLink.Status = 1;
+            }
+            else
+            {
+                newLink.Status = 3;
+            }
+       
             try
             {
                 var content = _context.Content.Find(newLink.ContentId);
                 if (content == null || string.IsNullOrEmpty(content.Name))
                 {
-                    ModelState.AddModelError("ContentId", "Contenu introuvable");
+                    ModelState.AddModelError("NewLink.ContentId", "Contenu introuvable");
                 }
             }
             catch (Exception ex)
@@ -137,7 +124,6 @@ namespace App_FDark.Controllers
                 // Gérer l'exception, loguer, etc., si nécessaire.
             }
 
-            //Envoie donnée au service
             if (ModelState.IsValid)
             {
                 _context.Add(newLink);
@@ -154,21 +140,19 @@ namespace App_FDark.Controllers
                 extId = _context.Content.Where(c => c.Id == newLink.ContentId).FirstOrDefault().ExtensionId;
             }
 
-            Links link = new Links(1, newLink.Label, newLink.Url, newLink.Description, newLink.ContentId, 1, newLink.DataType);
-            ViewData["contentId"] = newLink.ContentId;
-            ViewData["ExtensionList"] = new SelectList(_context.Extension.ToList(), "Id", "Name",extId);
-            ViewData["dataTypeList"] = new SelectList(DataTypeDictionary.dataTypeDictionary.Values,link.DataType);
-            ViewData["NewsCount"] = _resourcesServices.NewsCounter();
+            //Donnée Vue
+            _LinksCreateViewModel vm = new _LinksCreateViewModel(_context.Extension.ToList());
+            vm.NewLink = new Links(1, newLink.Label, newLink.Url, newLink.Description, newLink.ContentId, 1, newLink.DataType);
+            vm.ContentID = newLink.ContentId;
             if(byUser)
             {
-                return View("CreateByUser",link);
+                return View("CreateByUser",vm);
             }
-            return View(link);
+            return View(vm);
         }
 
         // GET: Links/Edit/5
         [Authorize(Roles = "Admin")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int? id,int redirId)
         {
             if (id == null || _context.Links == null)
@@ -183,10 +167,11 @@ namespace App_FDark.Controllers
             }
             int extId = _context.Content.Where(c => c.Id == links.ContentId).FirstOrDefault().ExtensionId;
             List<KeyValuePair<int, string>> statusList = StatusDictionary.statusDictionary.ToList();
+            
+            //Donnée Vue
             ViewData["ExtensionList"] = new SelectList(_context.Extension.ToList(), "Id", "Name",extId);
             ViewData["StatusList"] = new SelectList(statusList, "Key", "Value",links.Status);
             ViewBag.Redirect = redirId;
-            ViewData["NewsCount"] = _resourcesServices.NewsCounter();
             return View(links);
         }
 
@@ -213,6 +198,7 @@ namespace App_FDark.Controllers
             }
 
             int extId = _context.Content.Where(c => c.Id == link.ContentId).FirstOrDefault().ExtensionId;
+            //Donnée Vue
             ViewData["ExtensionList"] = new SelectList(_context.Extension.ToList(), "Id", "Name", extId);
 
             if (ModelState.IsValid)
@@ -240,13 +226,11 @@ namespace App_FDark.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["NewsCount"] = _resourcesServices.NewsCounter();
             return View(link);
         }
 
         // GET: Links/Delete/5
         [Authorize(Roles = "Admin")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Links == null)
@@ -260,7 +244,6 @@ namespace App_FDark.Controllers
             {
                 return NotFound();
             }
-            ViewData["NewsCount"] = _resourcesServices.NewsCounter();
             return View(links);
         }
 
@@ -285,7 +268,7 @@ namespace App_FDark.Controllers
         }
 
         //GET: SnapCard/5
-        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> GetSnapCard(int Id,string Label, string Url, string Description,string DataType,string Picture)
         {
             var snapResource = _resourcesServices.MakeSnapResource(Id,DataType, Label, Url, Description, Picture);
@@ -315,7 +298,6 @@ namespace App_FDark.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [ValidateAntiForgeryToken]
         public string AddPictureFiles(string newPictureLabel)
         {
             if (string.IsNullOrEmpty(newPictureLabel))

@@ -1,4 +1,6 @@
-﻿@{
+﻿@using App_FDark.Services.abstractServices;
+@inject ILayoutServices LayoutServices
+@{
     ViewData["Title"] = "Home Admin";
     Layout = "_LayoutAdmin";
 }
@@ -12,16 +14,16 @@
             <div class="p-1">
                 <a class="article text-decoration-none text-black" asp-controller="Links" asp-action="Index">
                     <h5 class="">Gérer des Ressources</h5>
-                    @if (ViewBag.NewsCount[0] > 0)
+                    @if (LayoutServices.NewsCounter()[0] > 0)
                     {
-                        <p>@ViewBag.NewsCount[0] nouvelles propositions de ressource</p>
+                        <p>@LayoutServices.NewsCounter()[0] nouvelles propositions de ressource</p>
                     }else{
                         <p>Pas de nouvelles propositions de ressource</p>
                     }
                     
                 </a>
-                <a class="article adminTextNav" asp-controller="Links" asp-action="Index" asp-route-status="Proposé">- Resources proposées (@ViewBag.NewsCount[0])</a><br />
-                <a class="article adminTextNav" asp-controller="Links" asp-action="Index" asp-route-status="Signalé">- Resources signalées (@ViewBag.NewsCount[2])</a><br />
+                <a class="article adminTextNav" asp-controller="Links" asp-action="Index" asp-route-status="Proposé">- Resources proposées (@LayoutServices.NewsCounter()[0])</a><br />
+                <a class="article adminTextNav" asp-controller="Links" asp-action="Index" asp-route-status="Signalé">- Resources signalées (@LayoutServices.NewsCounter()[2])</a><br />
                 <a class="article adminTextNav" asp-controller="Links" asp-action="Create">- Ajouter une ressource</a><br />
                 <a href="#" class="article adminTextNav" data-bs-toggle="modal" data-bs-target="#addFilesModal">- Ajouter une image</a>
             </div>
@@ -30,9 +32,9 @@
             <div class="p-1">
                 <a class="article text-decoration-none text-black" asp-controller="Account" asp-action="Index">
                     <h5 class="">Gérer des Users</h5>
-                    @if (ViewBag.NewsCount[1] > 0)
+                    @if (LayoutServices.NewsCounter()[1] > 0)
                     {
-                        <p>@ViewBag.NewsCount[1]  nouvelles demandes d'utilisateur</p>
+                        <p>@LayoutServices.NewsCounter()[1]  nouvelles demandes d'utilisateur</p>
                     }else{
                         <p>Pas de nouveaux utilisateur</p>
                     }
@@ -41,12 +43,14 @@
                 <a class="article adminTextNav" asp-controller="Role" asp-action="Index">- Gestion des Rôles</a>
             </div>
         </div>
-        <a class="article col-2 text-decoration-none text-black border border-2 border-dark m-2 rounded-3 shadow-lg" asp-area="" asp-controller="Home" asp-action="DiversManage">
+        <div class="article col-2 border border-2 border-dark m-2 rounded-3 shadow-lg">
             <div class="p-1">
                 <h5 class="">Gérer les categories</h5>
-                <p>Descriptif</p>
+                <a class="article adminTextNav" asp-controller="Contents" asp-action="Index">- Gestion des contenus</a><br />
+                <a class="article adminTextNav" asp-controller="Extensions" asp-action="Index">- Gestion des Categories</a><br />
+                <a class="article adminTextNav" asp-controller="ContentTypes" asp-action="Index">- Gestion des type de contenus</a>
             </div>
-        </a>
+        </div>
     </div>
 </div>
 <partial name="_AddFilesModal" />

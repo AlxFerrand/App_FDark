@@ -23,9 +23,9 @@ namespace App_FDark.Services.concretServices
             _context = context;
             _saveFilesService = saveFilesService;
         }
-        public CatalogViewModel CreateCatalogViewModel(List<Links> linksList)
+        public _LinksCatalogViewModel CreateCatalogViewModel(List<Links> linksList)
         {
-            CatalogViewModel vm = new CatalogViewModel();
+            _LinksCatalogViewModel vm = new _LinksCatalogViewModel();
             vm.Videos = CreateVideoList(linksList);
             vm.Sites = CreateSiteList(linksList);
             vm.Images = CreateImageList(linksList);
@@ -91,6 +91,7 @@ namespace App_FDark.Services.concretServices
         public ResourceSite CreateSiteResource(Links l)
         {
             ResourceSite site = new ResourceSite();
+            site.Id = l.Id;
             site.Label = l.Label;
             site.Url = l.Url;
             site.Description = l.Description;
@@ -101,6 +102,7 @@ namespace App_FDark.Services.concretServices
         public ResourceImage CreateImageResource(Links l)
         {
             ResourceImage image = new ResourceImage();
+            image.Id = l.Id;
             image.Label = l.Label;
             image.Description = l.Description;
             image.Status = l.Status;

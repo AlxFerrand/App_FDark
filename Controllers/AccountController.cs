@@ -27,7 +27,8 @@ namespace App_FDark.Controllers
         [HttpGet]
         public IActionResult Register()
         {
-            ViewBag.CategoriesList = new List<Extension>(_context.Extension);
+            //Donnée Vue
+            ViewBag.CategoriesList = _context.Extension.ToList();
             return View();
         }
 
@@ -55,7 +56,8 @@ namespace App_FDark.Controllers
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
-            ViewBag.CategoriesList = new List<Extension>(_context.Extension);
+            //Donnée Vue
+            ViewBag.CategoriesList = _context.Extension.ToList();
             return View(model);
         }
 
@@ -85,10 +87,9 @@ namespace App_FDark.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        [ValidateAntiForgeryToken]
         public IActionResult Index()
         {
-            ViewData["NewsCount"] = _resourcesService.NewsCounter();
+            //Model
             var vm = _context.Users.ToList();
             return View(vm);
         }
@@ -126,14 +127,16 @@ namespace App_FDark.Controllers
                     var userToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     await _userManager.ConfirmEmailAsync(user, userToken);
                     await _userManager.AddToRoleAsync(user, "user");
+
+                    //Model
                     var vm = _context.Users.ToList();
-                    ViewData["NewsCount"] = _resourcesService.NewsCounter();
                     return View("index", vm);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!UserExists(user.Id))
                     {
+                        //Model
                         error.RequestId = "Confirmation d'utilisateur";
                         error.MessageError = "Utilisateur inconnu";
                     }
@@ -143,6 +146,7 @@ namespace App_FDark.Controllers
                     }
                 }
             }
+            //Model
             error.RequestId = "Confirmation d'utilisateur";
             error.MessageError = "Utilisateur inconnu";
             return View("Error", error);
@@ -159,7 +163,7 @@ namespace App_FDark.Controllers
             {
                 if (String.IsNullOrEmpty(newPass))
                 {
-                    
+                    //Model
                     error.RequestId = "Modification de mot de passe";
                     error.MessageError = "Mot de passe vide";
                     return View("Error",error);
@@ -168,8 +172,8 @@ namespace App_FDark.Controllers
                 {
                     var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
                     var result = await _userManager.ResetPasswordAsync(user, resetToken, newPass);
+                    //Model
                     var vm = _context.Users.ToList();
-                    ViewData["NewsCount"] = _resourcesService.NewsCounter();
                     return View("index",vm);
                 }
                 catch (DbUpdateConcurrencyException)
@@ -184,6 +188,7 @@ namespace App_FDark.Controllers
                     }
                 }
             }
+            //Model
             error.RequestId = "Modification de mot de passe";
             error.MessageError = "User inconnu";
             return View("Error",error);

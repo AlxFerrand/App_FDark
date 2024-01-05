@@ -3,15 +3,14 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="addFilesModalTitle">Ajout d'images</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                 </button>
             </div>
             <div id="addFileModalContent" class="modal-body">
                 <form id="addFilesForm" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="newPictureFile" class="control-label">Choisissez un fichier :</label>
-                        <input type="file" name="newPictureFile" class="form-control" accept="jpg,png,jpeg" />
+                        <input id="newPictureFile" type="file" name="newPictureFile" class="form-control" onchange="CheckFileSize(this)" accept="jpg,png,jpeg" />
                     </div>
                     <div class="form-group">
                         <label for="newPictureLabel" class="control-label">Nom de l'image :</label>
@@ -21,7 +20,7 @@
                 </form>
             </div>
             <div class="modal-footer justify-content-center align-items-center">
-                <button type="button" onclick="AddNewFiles()" data-bs-dismiss="modal" class="btn btn-primary">Ajouter</button>
+                <button type="button" onclick="AddNewFiles()" class="btn btn-primary">Ajouter</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
