@@ -1,6 +1,7 @@
 ﻿using App_FDark.Data;
 using App_FDark.Models;
 using App_FDark.Services.abstractServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -106,7 +107,7 @@ namespace App_FDark.Controllers
 
             //Récupération des liens
             List<Links> linksList = _context.Links.Where(l=>l.ContentId == contentId).ToList();
-            CatalogViewModel vm = _resourcesServices.CreateCatalogViewModel(linksList);
+            CatalogViewModel vm = _resourcesServices.CreateCatalogViewModel(linksList.Where(l=>l.Status>=2).Where(l=>l.Status<=3).ToList());
 
             //Passage de paramètres à la vue
             Content contentSelected = _context.Content.Find(contentId);
@@ -117,10 +118,15 @@ namespace App_FDark.Controllers
             return View(vm);
         }
 
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
         public IActionResult HomeAdmin()
         {
+            ViewData["NewsCount"] = _resourcesServices.NewsCounter();
             return View();
         }
+ 
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetImagesList()
         {
             List<string> vm = new List<string>();
@@ -133,6 +139,47 @@ namespace App_FDark.Controllers
                 }
             }  
             return View("_ImagesListing",vm);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Archived(int id)
+        {
+            Links l = await _context.Links.FindAsync(id);
+            if (l != null)
+            {
+                l.Status = 4;
+                try
+                {
+                    _context.Update(l);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction("LinksCatalog", new { l.ContentId });
+        }
+
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Signal(int id)
+        {
+            Links l = await _context.Links.FindAsync(id);
+            if (l != null)
+            {
+                l.Status = 2;
+                try
+                {
+                    _context.Update(l);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction("LinksCatalog",new {l.ContentId});
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

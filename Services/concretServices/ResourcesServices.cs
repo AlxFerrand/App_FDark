@@ -4,6 +4,7 @@ using App_FDark.Services.abstractServices;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Migrations;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -37,7 +38,7 @@ namespace App_FDark.Services.concretServices
             List<Links> videoLinksList = linksList.Where(l => l.DataType == "video").ToList();
             foreach (var l in videoLinksList)
             {
-                ResourceVideo video = CreateVideoResource(l.Label, l.Url, l.Description);
+                ResourceVideo video = CreateVideoResource(l);
                 videoListVm.Add(video);
             }
             return videoListVm;
@@ -49,7 +50,7 @@ namespace App_FDark.Services.concretServices
             List<Links> siteList = linksList.Where(l => l.DataType == "site").ToList();
             foreach (var l in siteList)
             {
-                ResourceSite site = CreateSiteResource(l.Label,l.Url,l.Description,l.Picture);
+                ResourceSite site = CreateSiteResource(l);
                 siteListVm.Add(site);
             }
             return siteListVm;
@@ -61,47 +62,51 @@ namespace App_FDark.Services.concretServices
             List<Links> imageList = linksList.Where(l => l.DataType == "img").ToList();
             foreach (var l in imageList)
             {
-                ResourceImage image = CreateImageResource(l.Label,l.Description,l.Picture);
+                ResourceImage image = CreateImageResource(l);
                 imageListVm.Add(image);
             }
             return imageListVm;
         }
-        public ResourceVideo CreateVideoResource(string label, string url, string description)
+        public ResourceVideo CreateVideoResource(Links l)
         {
             ResourceVideo video = new ResourceVideo();
-            video.Label = label;
-            video.Url = url;
-            video.Description = description;
+            video.Id = l.Id;
+            video.Label = l.Label;
+            video.Url = l.Url;
+            video.Description = l.Description;
+            video.Status = l.Status;
 
-            if ((!String.IsNullOrEmpty(url)) && url.Contains("youtube.com"))
+            if ((!String.IsNullOrEmpty(l.Url)) && l.Url.Contains("youtube.com"))
             {
-                var uri = new Uri(url);
+                var uri = new Uri(l.Url);
                 var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
                 video.VideoId = query["v"];
             }
             else
             {
-                video.VideoId = url;
+                video.VideoId = l.Url;
             }
             return video;
         }
-        public ResourceSite CreateSiteResource(string label, string url, string description, string pictures)
+        public ResourceSite CreateSiteResource(Links l)
         {
             ResourceSite site = new ResourceSite();
-            site.Label = label;
-            site.Url = url;
-            site.Description = description;
-            site.Picture = pictures.Split(",")[0];
+            site.Label = l.Label;
+            site.Url = l.Url;
+            site.Description = l.Description;
+            site.Status = l.Status;
+            site.Picture = l.Picture.Split(",")[0];
             return site;
         }
-        public ResourceImage CreateImageResource(string label, string description, string picture)
+        public ResourceImage CreateImageResource(Links l)
         {
             ResourceImage image = new ResourceImage();
-            image.Label = label;
-            image.Description = description;
-            if (!String.IsNullOrEmpty(picture))
+            image.Label = l.Label;
+            image.Description = l.Description;
+            image.Status = l.Status;
+            if (!String.IsNullOrEmpty(l.Picture))
             {
-                image.Pictures = picture.Split(',');
+                image.Pictures = l.Picture.Split(',');
             }
             else
             {
@@ -325,15 +330,18 @@ namespace App_FDark.Services.concretServices
             switch (dataType)
             {
                 case "video":
-                    ResourceVideo video = CreateVideoResource(label, url, description);
+                    Links v = new Links(0,label,pictures,url,description,0,0,"video");
+                    ResourceVideo video = CreateVideoResource(v);
                     return video;
                     break;
                 case "site":
-                    ResourceSite site = CreateSiteResource(label, url, description, pictures);   
+                    Links s = new Links(0, label, pictures, url, description, 0, 0, "site");
+                    ResourceSite site = CreateSiteResource(s);   
                     return site;
                     break;
-                case "img":                  
-                    ResourceImage image = CreateImageResource(label,description,pictures);
+                case "img":
+                    Links i = new Links(0, label, pictures, url, description, 0, 0, "img");
+                    ResourceImage image = CreateImageResource(i);
                     return image;
                     break;
                 case "text":
@@ -345,5 +353,13 @@ namespace App_FDark.Services.concretServices
             }
         }
 
+        public int[] NewsCounter()
+        {
+            int[] newsCounter = new int[3];
+            newsCounter[0] = _context.Links.Where(l => l.Status == 1).ToList().Count();
+            newsCounter[1] = _context.Users.Where(u => u.EmailConfirmed == false).ToList().Count();
+            newsCounter[2] = _context.Links.Where(l => l.Status == 2).ToList().Count();
+            return newsCounter;
+        }
     }
 }

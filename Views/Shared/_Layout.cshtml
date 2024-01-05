@@ -39,7 +39,7 @@
                             </li>
                             @foreach (Extension extension in ViewBag.CategoriesList)
                             {
-                                if (extension.Id < 6)
+                                if (extension.Type.Equals("ext"))
                                 {
                                     if (ViewBag.ActualCatId == extension.Id)
                                     {
@@ -55,6 +55,9 @@
                                     }
                                 }
                             }
+                            <li class="nav-item">
+                                <a class="nav-link text-white fw-bold fs-5" asp-controller="Links" asp-action="Create" asp-route-byUser="True">| Proposer une Resource</a>
+                            </li>
                         </ul>
                     </div>
                         <div class="col container-fluid justify-content-end align-items-end">

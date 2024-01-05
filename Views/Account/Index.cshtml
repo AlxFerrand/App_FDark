@@ -1,0 +1,152 @@
+﻿@model List<ApplicationUser>
+@{
+    ViewData["Title"] = "User Manage";
+    Layout = "_LayoutAdmin";
+}
+<h1>Gestion des Utilisateurs</h1>
+<a class="btn btn-primary" asp-controller="Role" asp-action="Index" >Gestion des roles</a>
+<div class="row p-2">
+@if (Model.Where(u => u.EmailConfirmed == false).ToList().Count > 0)
+{
+    <h2>Nouveaux utilisateurs</h2>
+    <table class="w-50 table table-striped table-sm">
+        <thead>
+            <tr class="text-white" style="background-color : rgba(80, 45, 97,1)">
+                <th class="">
+                    User Name
+                </th>
+                    <th class="">
+                    Charactere Name
+                </th>
+                    <th class="">
+                    Server
+                </th>
+                    <th class=""></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (ApplicationUser user in Model.Where(u => u.EmailConfirmed == false).ToList())
+            {
+                <tr>
+                    <td class="">
+                        @Html.DisplayFor(modelItem => user.UserName)
+                    </td>
+                        <td class="">
+                        @Html.DisplayFor(modelItem => user.CharacterName)
+                    </td>
+                        <td class="">
+                        @Html.DisplayFor(modelItem => user.ServerName)
+                    </td>
+                    <td class="text-center">
+                            <a href="#" onclick="PreConfirmUser('@user.Id','@user.UserName','@user.CharacterName')">Confirmer</a> |
+                            <a href="#" onclick="PreDelete('@user.Id','@user.UserName','@user.CharacterName')" class="article">Rejeter</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        </table>
+    }
+</div>
+<div class="row p-2">
+<h2>Utilisateurs enregistrés</h2>
+@if (Model.Where(u=>u.EmailConfirmed == true).ToList().Count > 0)
+{
+    <table class="w-50 table table-sm table-striped">
+        <thead>
+            <tr class="text-white" style="background-color : rgba(80, 45, 97,1)">
+                <th>
+                    User Name
+                </th>
+                <th>
+                    Charactere Name
+                </th>
+                <th>
+                    Server
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (ApplicationUser user in Model.Where(u => u.EmailConfirmed == true).ToList())
+            {
+                <tr>
+                    <td class="">
+                        @Html.DisplayFor(modelItem => user.UserName)
+                    </td>
+                    <td class="">
+                        @Html.DisplayFor(modelItem => user.CharacterName)
+                    </td>
+                    <td class="">
+                        @Html.DisplayFor(modelItem => user.ServerName)
+                    </td>
+                    <td class="text-center">
+                            <a href="#" onclick="PreEditPass('@user.Id','@user.UserName','@user.CharacterName')">Modifier Password</a> |
+                            <a href="#" onclick="PreDelete('@user.Id','@user.UserName','@user.CharacterName')" class="article">Supprimer</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+</div>
+<div class="modal fade" id="deleteModal" tabindex="1" role="dialog" aria-labelledby="deleteModalTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalTitle">Etes vous sûr de vouloir supprimer cet utilisateur ?</h5>
+            </div>
+            <div id="modalContent" class="modal-body">
+                <input id="deleteUserId" hidden />
+                <p id="deleteUserName">Utilisateur : </p>
+                <p id="deleteUserCharactere">Nom du personnage : </p>
+            </div>
+            <div class="row modal-footer justify-content-center align-items-center">
+                <button type="button" onclick="DeleteUser()" data-bs-dismiss="modal" class="col-2 btn btn-danger">Delete</button>
+                <button type="button" class="col-2 btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="confirmModal" tabindex="1" role="dialog" aria-labelledby="confirmModalTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalTitle">Etes vous sûr de vouloir valider cet utilisateur ?</h5>
+            </div>
+            <form asp-controller="Account" asp-action="ConfirmeUser" method="post">
+            <div id="modalContent" class="modal-body">
+                <input name="id" id="confirmeUserId" hidden />
+                <p id="confirmeUserName">Utilisateur : </p>
+                <p id="confirmeUserCharactere">Nom du personnage : </p>
+            </div>
+            <div class="row modal-footer justify-content-center align-items-center">
+                <button type="submit" data-bs-dismiss="modal" class="col-3 btn btn-success">Confirmer</button>
+                <button type="button" class="col-2 btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="PassModal" tabindex="1" role="dialog" aria-labelledby="PassModalTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="PassModalTitle">Modification de mot de passe</h5>
+            </div>
+            <form asp-controller="Account" asp-action="EditPass" method="post">
+            <div id="modalContent" class="modal-body">
+                <input name="id" id="PassUserId" hidden />
+                <p id="PassUserName">Utilisateur : </p>
+                <p id="PassUserCharactere">Nom du personnage : </p>
+                <label for="newPass">Nouveau mot de passe</label>
+                <input type="text" name="newPass" id="newPassUser" required />
+            </div>
+            <div class="row modal-footer justify-content-center align-items-center">
+                <button type="submit" class="col-3 btn btn-success">Confirmer</button>
+                <button type="button" class="col-2 btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="~/js/AccountManage.js"></script>

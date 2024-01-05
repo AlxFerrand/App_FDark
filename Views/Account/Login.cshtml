@@ -1,0 +1,34 @@
+﻿@model LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = "_LayoutEntity";
+}
+
+<h2 class="text-center">Log in</h2>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form asp-controller="Account" asp-action="Login" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Username" class="control-label"></label>
+                    <input asp-for="Username" class="form-control" />
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Password" class="control-label"></label>
+                    <input asp-for="Password" class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="RememberMe" class="control-label"></label>
+                    <input asp-for="RememberMe" class="form-check" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="text-center mt-4">
+                    <button type="submit" class="col-2 btn btn-primary">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

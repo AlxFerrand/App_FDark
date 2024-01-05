@@ -1,0 +1,29 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@model IEnumerable<IdentityRole>
+@{
+    ViewData["Title"] = "ROLES";
+    Layout = "_LayoutAdmin";
+}
+
+<h1 class="text-center">Gestion des rôles</h1>
+<a asp-action="Create" class="btn btn-success mt-2 mb-2">Créer un Rôle +</a>
+
+<table class="w-50 table table-striped table-sm">
+    <thead>
+        <tr class="text-white" style="background-color : rgba(80, 45, 97,1)">
+            <th>Name</th>
+            <th></th>
+
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var role in Model)
+    {
+        <tr>
+            <td>@role.Name</td>
+            <td class="text-center"><a class="btn btn-sm btn-primary" asp-action="Update" asp-route-id="@role.Id">Gérer</a></td>
+        </tr>
+    }
+    </tbody>
+</table>
+<a asp-controller="Account" asp-action="Index" class="btn btn-primary mt-2 mb-2">Gestion Utilisateurs</a>

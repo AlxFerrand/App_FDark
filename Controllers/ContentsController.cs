@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using App_FDark.Data;
 using App_FDark.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace App_FDark.Controllers
 {
@@ -46,6 +47,8 @@ namespace App_FDark.Controllers
         }
 
         // GET: Contents/Create
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
         public IActionResult Create()
         {
             return View();
@@ -55,6 +58,7 @@ namespace App_FDark.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,ExtensionId,ContentTypeId")] Content content)
         {
@@ -68,6 +72,8 @@ namespace App_FDark.Controllers
         }
 
         // GET: Contents/Edit/5
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Content == null)
@@ -87,6 +93,7 @@ namespace App_FDark.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ExtensionId,ContentTypeId")] Content content)
         {
@@ -119,6 +126,8 @@ namespace App_FDark.Controllers
         }
 
         // GET: Contents/Delete/5
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Content == null)
@@ -138,6 +147,7 @@ namespace App_FDark.Controllers
 
         // POST: Contents/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

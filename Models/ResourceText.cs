@@ -2,11 +2,16 @@
 {
     public class ResourceText
     {
+        public int Id { get; set; }
         public string Label { get; set; }
         public string Text { get; set; }
+        public int Status { get; set; }
 
         public ResourceText() { }
-        public ResourceText(string label, string text) {  Label = label; Text = text; }
+        public ResourceText(int id,string label, string text, int status)
+        {
+            Id = id; Label = label; Text = text; Status = status;
+        }
 
     }
 }
