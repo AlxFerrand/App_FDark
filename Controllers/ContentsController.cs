@@ -52,7 +52,6 @@ namespace App_FDark.Controllers
 
         // GET: Contents/Create
         [Authorize(Roles = "Admin")]
-        [ValidateAntiForgeryToken]
         public IActionResult Create()
         {
             return View();
@@ -64,7 +63,7 @@ namespace App_FDark.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,ExtensionId,ContentTypeId")] Content content)
+        public async Task<IActionResult> Create([Bind("Id,Name,ExtensionId,ContentTypeId,Picture")] Content content)
         {
             if (ModelState.IsValid)
             {
@@ -77,7 +76,6 @@ namespace App_FDark.Controllers
 
         // GET: Contents/Edit/5
         [Authorize(Roles = "Admin")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Content == null)
@@ -99,7 +97,7 @@ namespace App_FDark.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ExtensionId,ContentTypeId")] Content content)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ExtensionId,ContentTypeId,Picture")] Content content)
         {
             if (id != content.Id)
             {
@@ -131,7 +129,6 @@ namespace App_FDark.Controllers
 
         // GET: Contents/Delete/5
         [Authorize(Roles = "Admin")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Content == null)

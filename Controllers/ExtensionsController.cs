@@ -59,7 +59,7 @@ namespace App_FDark.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Extension extension)
+        public async Task<IActionResult> Create([Bind("Id,Name,Type")] Extension extension)
         {
             if (ModelState.IsValid)
             {
@@ -91,7 +91,7 @@ namespace App_FDark.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Extension extension)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Type")] Extension extension)
         {
             if (id != extension.Id)
             {
